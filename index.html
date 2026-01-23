@@ -1,66 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RLOY HOSTING - PT BKI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-black text-white p-6">
-    <div class="max-w-md mx-auto bg-zinc-900 p-8 rounded-[2rem] border border-zinc-800 shadow-2xl">
-        <h1 class="text-3xl font-black text-blue-500">RLOY <span class="text-white text-xs font-light tracking-widest uppercase">Panel</span></h1>
-        <p class="text-[10px] text-gray-500 mb-8 tracking-widest">PT BANGGA KARYA INDONESIA</p>
+<body class="bg-black text-white p-6 font-sans">
+    <div class="max-w-md mx-auto bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
+        <h1 class="text-4xl font-black text-blue-500 tracking-tighter">RLOY <span class="text-white text-sm font-light tracking-[0.3em] uppercase block">Cloud Hosting</span></h1>
+        <p class="text-[10px] text-gray-500 mt-2 mb-8 tracking-widest uppercase">Property of PT Bangga Karya Indonesia</p>
 
-        <div class="space-y-4">
-            <input type="text" id="siteName" placeholder="Nama Web (Misal: RK)" 
-                class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-blue-500">
+        <div class="space-y-5">
+            <div>
+                <label class="text-xs text-zinc-500 ml-2 mb-2 block">NAMA WEBSITE</label>
+                <input type="text" id="siteName" placeholder="Contoh: Portofolio-RK" 
+                    class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-blue-500 transition-all">
+            </div>
             
-            <textarea id="htmlCode" placeholder="Tempel Kode HTML di sini..." rows="8"
-                class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-blue-500 font-mono text-sm"></textarea>
+            <div>
+                <label class="text-xs text-zinc-500 ml-2 mb-2 block">KODE HTML</label>
+                <textarea id="htmlCode" placeholder="Tempel kodingan di sini..." rows="8"
+                    class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-blue-500 font-mono text-sm transition-all"></textarea>
+            </div>
             
             <button onclick="deployKeRloy()" id="btn"
-                class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black tracking-widest transition-all">
-                DEPLOY / UPDATE
+                class="w-full bg-blue-600 hover:bg-blue-500 active:scale-95 py-5 rounded-2xl font-black tracking-widest transition-all shadow-lg shadow-blue-900/20">
+                PUBLISH KE RLOY
             </button>
         </div>
 
-        <div id="hasil" class="hidden mt-8 p-4 bg-blue-900/20 border border-blue-800 rounded-2xl text-center">
-            <p class="text-xs text-blue-300">WEB BERHASIL PUBLIK:</p>
-            <a id="linkHasil" href="#" target="_blank" class="text-white font-bold block mt-2 underline break-all"></a>
+        <div id="hasil" class="hidden mt-10 p-6 bg-blue-950/30 border border-blue-800 rounded-[2rem] text-center animate-bounce">
+            <p class="text-[10px] text-blue-400 font-bold tracking-widest uppercase">Web Berhasil Online!</p>
+            <a id="linkHasil" href="#" target="_blank" class="text-white font-bold block mt-3 underline break-all text-sm"></a>
+            <p class="text-[9px] text-zinc-500 mt-4 italic text-center">Salin link di atas untuk dibagikan</p>
         </div>
     </div>
 
     <script>
-        // Data dari dashboard Supabase Bapak
-        const SUB_URL = "https://gsclgqtzvrkabtqyrtkh.supabase.co";
-        const SUB_KEY = "sb_publishable_oVtbFbHKvpHICGCAs19gmA_56miLSTt";
-        const supabase = supabase.createClient(SUB_URL, SUB_KEY);
-
         async function deployKeRloy() {
-            const name = document.getElementById('siteName').value.toLowerCase();
+            const name = document.getElementById('siteName').value || "rloy-web";
             const content = document.getElementById('htmlCode').value;
             const btn = document.getElementById('btn');
+            
+            // TOKEN MILIK BAPAK SUDAH TERPASANG
+            const GITHUB_TOKEN = "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";
 
-            if(!name || !content) return alert("Isi nama dan kode dulu, Pak!");
+            if(!content) return alert("Kodenya jangan kosong, Pak Boss!");
 
-            btn.innerText = "SEDANG MEMPROSES...";
+            btn.innerText = "MENGHUBUNGKAN KE CLOUD...";
             btn.disabled = true;
 
-            // Fitur UPSERT: Simpan Baru ATAU Update Jika Nama Sudah Ada
-            const { error } = await supabase
-                .from('rloy-sites')
-                .upsert({ id_name: name, html_content: content }, { onConflict: 'id_name' });
+            try {
+                const response = await fetch("https://api.github.com/gists", {
+                    method: "POST",
+                    headers: { 
+                        "Authorization": `token ${GITHUB_TOKEN}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        description: "Rloy Cloud: " + name,
+                        public: true,
+                        files: { "index.html": { content: content } }
+                    })
+                });
 
-            if(error) {
-                alert("Gagal Pak! " + error.message);
-                btn.innerText = "DEPLOY / UPDATE";
-                btn.disabled = false;
-            } else {
-                const linkFinal = window.location.origin + "/view.html?id=" + name;
-                document.getElementById('hasil').classList.remove('hidden');
-                document.getElementById('linkHasil').innerText = linkFinal;
-                document.getElementById('linkHasil').href = linkFinal;
-                btn.innerText = "BERHASIL DIUPDATE!";
+                const data = await response.json();
+                
+                if (data.id) {
+                    // Link Sakti: Menampilkan HTML langsung tanpa perlu file view.html lagi
+                    const finalLink = "https://gist.githack.com/" + data.owner.login + "/" + data.id + "/raw/index.html";
+                    
+                    document.getElementById('hasil').classList.remove('hidden');
+                    document.getElementById('linkHasil').innerText = finalLink;
+                    document.getElementById('linkHasil').href = finalLink;
+                    
+                    alert("MANTAP PAK! WEB " + name.toUpperCase() + " SUDAH LIVE.");
+                } else {
+                    alert("Gagal Pak! " + (data.message || "Cek Token Anda"));
+                }
+            } catch (e) {
+                alert("Koneksi Error: " + e.message);
+            } finally {
+                btn.innerText = "PUBLISH KE RLOY";
                 btn.disabled = false;
             }
         }
