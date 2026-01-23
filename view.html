@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RLOY VIEW</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <script>
+        const SUB_URL = "https://gsclgqtzvrkabtqyrtkh.supabase.co";
+        const SUB_KEY = "sb_publishable_oVtbFbHKvpHICGCAs19gmA_56miLSTt";
+        const supabase = supabase.createClient(SUB_URL, SUB_KEY);
+
+        async function tampilkanWeb() {
+            const params = new URLSearchParams(window.location.search);
+            const idWeb = params.get('id');
+
+            if(!idWeb) return document.write("Mana ID-nya Pak?");
+
+            const { data, error } = await supabase
+                .from('rloy-sites')
+                .select('html_content')
+                .eq('id_name', idWeb)
+                .single();
+
+            if (data) {
+                document.open();
+                document.write(data.html_content);
+                document.close();
+            } else {
+                document.write("<h1>Web Rloy Tidak Ditemukan!</h1>");
+            }
+        }
+        tampilkanWeb();
+    </script>
+</body>
+</html>
