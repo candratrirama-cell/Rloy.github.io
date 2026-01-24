@@ -2,30 +2,41 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RLOY | Deployment Hub PT BKI</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --b-black: #000; --b-panel: #0a0a0a; --b-accent: #ffffff; }
-        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        :root { --b-black: #000; --b-panel: #0a0a0a; --accent-red: #fe2c55; --accent-blue: #0070f3; }
+        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
         .hidden { display: none !important; }
-        .glass-box { background: var(--b-panel); border: 1px solid #1a1a1a; border-radius: 20px; padding: 35px; }
-        .btn-action { background: #fff; color: #000; padding: 18px 32px; border-radius: 12px; font-weight: 800; transition: 0.3s; cursor: pointer; text-align: center; }
-        .btn-action:hover { background: #00ff88; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,255,136,0.2); }
-        .input-premium { background: #000; border: 1px solid #222; padding: 18px; border-radius: 12px; width: 100%; color: #fff; outline: none; transition: 0.3s; }
-        .input-premium:focus { border-color: #fff; }
+        
+        /* UI Enhancement */
+        .glass-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 24px; padding: 35px; }
+        .btn-action { background: #fff; color: #000; padding: 18px 32px; border-radius: 15px; font-weight: 800; transition: 0.3s; cursor: pointer; text-align: center; border: none; }
+        .btn-action:hover { background: var(--accent-red); color: #fff; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(254, 44, 85, 0.3); }
+        
+        .input-premium { background: #000; border: 1px solid #222; padding: 18px; border-radius: 15px; width: 100%; color: #fff; outline: none; transition: 0.3s; font-weight: 600; }
+        .input-premium:focus { border-color: var(--accent-red); }
+        
+        .otp-input { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; text-align: center; font-weight: 800; font-size: 24px; letter-spacing: 10px; outline: none; }
+        
         .nav-fixed { background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid #111; }
+        
+        /* Animation */
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(254, 44, 85, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(254, 44, 85, 0); } 100% { box-shadow: 0 0 0 0 rgba(254, 44, 85, 0); } }
+        .pulse { animation: pulse-red 2s infinite; }
     </style>
 </head>
 <body>
 
 <nav class="fixed top-0 w-full z-[100] nav-fixed px-6 md:px-12 py-6 flex justify-between items-center">
-    <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="navTo('home')">RLOY</h1>
+    <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer hover:text-[#fe2c55] transition" onclick="navTo('home')">RLOY</h1>
     <div id="nav-user-area" class="flex gap-4">
-        <button onclick="checkAccess()" class="text-xs font-bold border border-white/10 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">LAUNCH CONSOLE</button>
+        <button onclick="checkAccess()" class="text-[10px] font-black border border-white/10 px-6 py-2 rounded-full hover:bg-white hover:text-black transition uppercase tracking-widest">Console</button>
     </div>
 </nav>
 
@@ -36,48 +47,46 @@
             <p class="text-gray-500 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-10">
                 Infrastruktur Deployment tercepat untuk publik, dikelola secara eksklusif oleh <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.
             </p>
-            <button onclick="checkAccess()" class="btn-action !px-16 text-sm uppercase tracking-widest">Start Creating Website</button>
+            <button onclick="checkAccess()" class="btn-action !px-16 text-xs uppercase tracking-[0.2em] pulse">Start Creating Website</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="glass-box">
-                <div class="text-3xl mb-4">🎯</div>
+                <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-6 text-xl">🎯</div>
                 <h3 class="text-xl font-bold mb-4">Visi & Misi</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Menghilangkan hambatan teknis bagi semua orang. Kami ingin siapapun bisa memiliki kehadiran digital tanpa harus belajar server atau coding yang rumit.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Menghilangkan hambatan teknis. Siapapun bisa memiliki kehadiran digital tanpa coding rumit.</p>
             </div>
             <div class="glass-box">
-                <div class="text-3xl mb-4">🛡️</div>
+                <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-6 text-xl">🛡️</div>
                 <h3 class="text-xl font-bold mb-4">Keamanan</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Setiap website yang diterbitkan diproses melalui gerbang keamanan RMAIL OTP untuk memastikan kualitas dan integritas konten di jaringan kami.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Verifikasi berlapis melalui gerbang RMAIL OTP untuk integritas konten maksimal.</p>
             </div>
             <div class="glass-box">
-                <div class="text-3xl mb-4">⚡</div>
-                <h3 class="text-xl font-bold mb-4">Info Layanan</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Gratis digunakan untuk publik melalui otentikasi mitra. Mendukung file HTML statis dengan link publik instan rloy.vercel.app/#namaweb.
-                </p>
+                <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-6 text-xl">⚡</div>
+                <h3 class="text-xl font-bold mb-4">Instant</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Mendukung HTML statis dengan link publik instan rloy.vercel.app/#namaweb.</p>
             </div>
         </div>
     </div>
 </section>
 
 <section id="p-login" class="hidden min-h-screen flex items-center justify-center px-6">
-    <div class="glass-box max-w-sm w-full text-center">
-        <h2 class="text-2xl font-black mb-2 italic">RMAIL ACCESS</h2>
-        <p class="text-[10px] text-gray-500 mb-10 uppercase tracking-widest font-bold">Verifikasi Identitas Anda</p>
-        
-        <div id="auth-s1">
-            <input type="text" id="rmail-id" class="input-premium mb-4 text-center" placeholder="ID PENGGUNA RMAIL">
-            <button onclick="sendOTP()" class="btn-action w-full">Kirim Kode OTP</button>
+    <div class="w-full max-w-sm glass-box p-10 text-center shadow-2xl border-white/10">
+        <div id="step-1">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#fe2c55] to-[#0070f3] rounded-2xl mx-auto mb-6 flex items-center justify-center font-black text-white text-2xl shadow-lg">R</div>
+            <h1 class="text-2xl font-black uppercase mb-1">Login Secure</h1>
+            <p class="text-[10px] text-gray-500 font-bold mb-8 uppercase tracking-widest">Gateway PT BKI</p>
+            
+            <input type="text" id="target-id" placeholder="USERNAME RMAIL" class="input-premium text-center uppercase mb-4">
+            <button onclick="sendOTP()" id="btn-otp" class="w-full bg-[#fe2c55] py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest active:scale-95 shadow-lg shadow-red-500/20 text-white">Dapatkan OTP</button>
         </div>
 
-        <div id="auth-s2" class="hidden">
-            <input type="text" id="rmail-otp" class="input-premium mb-4 text-center text-3xl font-bold tracking-[10px]" maxlength="6">
-            <button onclick="verifyOTP()" class="btn-action w-full">Verifikasi & Masuk</button>
+        <div id="step-2" class="hidden">
+            <h2 class="text-xl font-black uppercase mb-2">Verifikasi OTP</h2>
+            <p class="text-[9px] text-gray-400 mb-6 italic">Kode dikirim ke <b class="text-blue-400">verifyotp ✓</b> di RMAIL Anda.</p>
+            
+            <input type="text" id="otp-val" placeholder="000000" maxlength="6" class="w-full p-5 otp-input mb-6 text-white">
+            <button onclick="verifyOTP()" class="w-full bg-[#0070f3] py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest active:scale-95 text-white">Verifikasi & Masuk</button>
         </div>
     </div>
 </section>
@@ -86,35 +95,32 @@
     <div class="max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
             <div>
-                <h2 class="text-4xl font-black italic mb-2">My Workspace</h2>
-                <p class="text-gray-500 text-sm">Kelola dan deploy website baru Anda di sini.</p>
+                <h2 class="text-5xl font-black italic mb-2 tracking-tighter">My Workspace</h2>
+                <p class="text-gray-500 text-sm">Deployment dashboard untuk akun <span id="user-display" class="text-white font-bold">...</span></p>
             </div>
-            <div class="bg-white/5 px-6 py-3 rounded-xl border border-white/5">
-                <span id="user-tag" class="text-xs font-bold text-gray-400 uppercase tracking-widest">...</span>
-                <button onclick="logout()" class="ml-4 text-xs font-bold text-red-700">SIGNOUT</button>
-            </div>
+            <button onclick="logout()" class="px-6 py-3 bg-red-950/30 text-red-500 text-xs font-bold rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition">SIGNOUT</button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <div class="lg:col-span-5">
-                <div class="glass-box border-white/5">
-                    <h4 class="text-xs font-bold text-gray-600 uppercase mb-8 tracking-widest">New Deployment</h4>
+                <div class="glass-box !p-8">
+                    <h4 class="text-[10px] font-black text-gray-500 uppercase mb-8 tracking-[0.2em]">New Project</h4>
                     <div class="space-y-6">
                         <div>
-                            <label class="text-[10px] font-bold text-gray-500 block mb-3 uppercase">Slug Website</label>
-                            <input type="text" id="web-slug" class="input-premium" placeholder="nama-proyek-kamu">
+                            <label class="text-[9px] font-bold text-gray-400 block mb-3 uppercase tracking-widest">Slug (URL Name)</label>
+                            <input type="text" id="web-slug" class="input-premium" placeholder="proyek-keren-saya">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-gray-500 block mb-3 uppercase">File index.html</label>
-                            <div class="border-2 border-dashed border-white/5 p-12 text-center rounded-2xl hover:border-white transition relative cursor-pointer">
+                            <label class="text-[9px] font-bold text-gray-400 block mb-3 uppercase tracking-widest">HTML Source</label>
+                            <div class="border-2 border-dashed border-white/10 p-12 text-center rounded-2xl hover:border-[#fe2c55] transition relative cursor-pointer group">
                                 <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
-                                <p id="file-label" class="text-xs font-bold text-gray-500">UPLOAD HTML FILE</p>
+                                <p id="file-label" class="text-xs font-bold text-gray-500 group-hover:text-white">DRAG OR CLICK TO UPLOAD</p>
                             </div>
                         </div>
-                        <button onclick="pushDeploy()" id="btn-deploy" class="btn-action w-full">PUBLISH WEBSITE 🚀</button>
+                        <button onclick="pushDeploy()" id="btn-deploy" class="btn-action w-full text-xs uppercase tracking-widest">Publish Website 🚀</button>
                         
-                        <div id="deploy-success" class="hidden p-6 bg-white rounded-xl text-black">
-                            <p class="text-[10px] font-black uppercase mb-1">Berhasil Diterbitkan:</p>
+                        <div id="deploy-success" class="hidden p-6 bg-blue-600 rounded-2xl text-white">
+                            <p class="text-[10px] font-black uppercase mb-1">Website Live At:</p>
                             <a id="final-url" href="#" target="_blank" class="text-sm font-bold underline break-all font-mono">rloy.io/#...</a>
                         </div>
                     </div>
@@ -122,7 +128,7 @@
             </div>
 
             <div class="lg:col-span-7">
-                <h4 class="text-xs font-bold text-gray-600 uppercase mb-8 tracking-widest">Live Projects</h4>
+                <h4 class="text-[10px] font-black text-gray-500 uppercase mb-8 tracking-[0.2em]">Deployment List</h4>
                 <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     </div>
             </div>
@@ -137,16 +143,23 @@
 
     let adminSession = localStorage.getItem('rloy_master_key') || "";
     let htmlBuffer = "";
+    let generatedOTP = "";
+    let targetUser = "";
 
     window.onload = () => {
         const hash = window.location.hash.substring(1);
         if(hash) return serve(hash);
-        if(adminSession) updateAuthUI();
+        
+        if(adminSession) {
+            document.getElementById('user-display').innerText = adminSession;
+            navTo('console');
+        }
     };
 
     function navTo(id) {
         document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-        document.getElementById('p-' + id).classList.remove('hidden');
+        const target = document.getElementById('p-' + id);
+        if(target) target.classList.remove('hidden');
         if(id === 'console') loadProjects();
         window.scrollTo(0,0);
     }
@@ -156,50 +169,79 @@
         else navTo('console');
     }
 
-    // AUTH SYSTEM
+    // --- NEW LOGIN SYSTEM ---
     function sendOTP() {
-        const u = document.getElementById('rmail-id').value.trim().toLowerCase();
-        db.ref('users/'+u).once('value', s => {
+        targetUser = document.getElementById('target-id').value.trim().toLowerCase();
+        if(!targetUser) return alert("Masukkan ID RMAIL Anda!");
+        
+        const btn = document.getElementById('btn-otp');
+        btn.innerText = "CHECKING ID...";
+
+        db.ref('users/'+targetUser).once('value', s => {
             if(s.exists()) {
-                const otp = Math.floor(100000 + Math.random() * 900000).toString();
-                db.ref('chats/'+[u,"verifyotp"].sort().join("_")).push({ s:"sys", t:"RLOY TOKEN: "+otp, time:Date.now() });
-                window.vToken = otp; window.vUser = u;
-                document.getElementById('auth-s1').classList.add('hidden');
-                document.getElementById('auth-s2').classList.remove('hidden');
-            } else alert("Username RMAIL tidak ditemukan.");
+                generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+                const now = Date.now();
+                
+                // Register verifybot if not exist
+                db.ref('users/verifyotp').update({ username: "verifyotp", verify: "blue", status: "online" });
+
+                const rid = [targetUser, "verifyotp"].sort().join("_");
+
+                db.ref('chats/'+rid).push({
+                    s: "verifyotp",
+                    t: "RLOY LOGIN TOKEN: " + generatedOTP,
+                    time: now
+                }).then(() => {
+                    db.ref('mylists/'+targetUser+'/verifyotp').transaction(v => {
+                        return { last: now, unread: ((v && v.unread) || 0) + 1 };
+                    });
+                    
+                    document.getElementById('step-1').classList.add('hidden');
+                    document.getElementById('step-2').classList.remove('hidden');
+                });
+            } else {
+                alert("User ID tidak ditemukan!");
+                btn.innerText = "Dapatkan OTP";
+            }
         });
     }
 
     function verifyOTP() {
-        if(document.getElementById('rmail-otp').value === window.vToken) {
-            localStorage.setItem('rloy_master_key', window.vUser);
-            location.reload();
-        } else alert("Kode salah.");
+        const input = document.getElementById('otp-val').value.trim();
+        if(input === generatedOTP) {
+            localStorage.setItem('rloy_master_key', targetUser);
+            adminSession = targetUser;
+            document.getElementById('user-display').innerText = targetUser;
+            navTo('console');
+        } else {
+            alert("OTP Salah!");
+        }
     }
 
-    function updateAuthUI() {
-        document.getElementById('user-tag').innerText = "Logged as: " + adminSession;
+    function logout() {
+        localStorage.removeItem('rloy_master_key');
+        location.reload();
     }
 
-    function logout() { localStorage.removeItem('rloy_master_key'); location.reload(); }
-
-    // DEPLOY SYSTEM
+    // --- DEPLOY SYSTEM ---
     function readFile(input) {
         const f = input.files[0];
         if(!f) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             htmlBuffer = e.target.result;
-            document.getElementById('file-label').innerText = "READY: " + f.name;
+            document.getElementById('file-label').innerText = "SELECTED: " + f.name.toUpperCase();
+            document.getElementById('file-label').classList.add('text-white');
         };
         reader.readAsText(f);
     }
 
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if(!slug || !htmlBuffer) return alert("Lengkapi nama & file.");
+        if(!slug || !htmlBuffer) return alert("Slug dan File HTML wajib diisi!");
 
-        document.getElementById('btn-deploy').innerText = "PUBLISHING...";
+        const btn = document.getElementById('btn-deploy');
+        btn.innerText = "PUBLISHING...";
 
         db.ref('sites/' + slug).set({
             content: htmlBuffer,
@@ -211,8 +253,9 @@
             document.getElementById('final-url').innerText = "rloy.vercel.app/#" + slug;
             document.getElementById('final-url').href = final;
             document.getElementById('deploy-success').classList.remove('hidden');
-            document.getElementById('btn-deploy').innerText = "PUBLISH WEBSITE 🚀";
-            alert("Website Anda Live!");
+            btn.innerText = "PUBLISH WEBSITE 🚀";
+            alert("Website " + slug + " berhasil diterbitkan!");
+            loadProjects();
         });
     }
 
@@ -220,27 +263,34 @@
         db.ref('sites').orderByChild('owner').equalTo(adminSession).on('value', s => {
             const list = document.getElementById('project-list');
             list.innerHTML = "";
+            if(!s.exists()) {
+                list.innerHTML = "<p class='text-gray-600 text-xs italic'>Belum ada proyek dideploy.</p>";
+                return;
+            }
             s.forEach(child => {
                 const d = child.val();
                 list.innerHTML += `
-                    <div class="glass-box !p-6 border-white/5">
+                    <div class="glass-box !p-6 border-white/5 hover:border-white/20 transition group">
                         <div class="flex justify-between items-start mb-6">
-                            <h4 class="text-xl font-bold italic">/${child.key}</h4>
+                            <div>
+                                <h4 class="text-xl font-bold italic group-hover:text-[#fe2c55] transition">/${child.key}</h4>
+                                <p class="text-[8px] text-gray-600 uppercase mt-1">${d.time}</p>
+                            </div>
                             <div class="text-right">
-                                <span class="text-3xl font-black">${d.stats ? d.stats.views : 0}</span>
-                                <p class="text-[9px] text-gray-500 uppercase">Visits</p>
+                                <span class="text-2xl font-black">${d.stats ? d.stats.views : 0}</span>
+                                <p class="text-[8px] text-gray-500 uppercase">Visits</p>
                             </div>
                         </div>
                         <div class="flex gap-4 pt-4 border-t border-white/5">
-                            <a href="/#${child.key}" target="_blank" class="text-[10px] font-bold text-blue-500 underline uppercase">Live</a>
-                            <button onclick="delSite('${child.key}')" class="text-[10px] font-bold text-red-900 uppercase">Hapus</button>
+                            <a href="/#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 uppercase tracking-widest">View Live</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-800 hover:text-red-500 uppercase tracking-widest transition">Delete</button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
+    function delSite(k) { if(confirm("Hapus proyek ini secara permanen?")) db.ref('sites/'+k).remove(); }
 
     function serve(h) {
         db.ref('sites/'+h).once('value', s => {
