@@ -3,209 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BKI Deploy - PT Bangga Karya Indonesia</title>
+    <title>RLOY | Deployment Hub PT BKI</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050505; color: #fff; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .blue-gradient { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        .text-gradient { background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .fade-out { opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
-        .fade-in { animation: fadeIn 0.5s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --b-black: #000; --b-panel: #0a0a0a; --b-accent: #ffffff; }
+        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .hidden { display: none !important; }
+        .glass-box { background: var(--b-panel); border: 1px solid #1a1a1a; border-radius: 20px; padding: 35px; }
+        .btn-action { background: #fff; color: #000; padding: 18px 32px; border-radius: 12px; font-weight: 800; transition: 0.3s; cursor: pointer; text-align: center; }
+        .btn-action:hover { background: #00ff88; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,255,136,0.2); }
+        .input-premium { background: #000; border: 1px solid #222; padding: 18px; border-radius: 12px; width: 100%; color: #fff; outline: none; transition: 0.3s; }
+        .input-premium:focus { border-color: #fff; }
+        .nav-fixed { background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid #111; }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        
-        <section id="home-page" class="min-h-screen flex flex-col items-center justify-center px-6 relative text-center">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 blur-[120px] rounded-full"></div>
+<nav class="fixed top-0 w-full z-[100] nav-fixed px-6 md:px-12 py-6 flex justify-between items-center">
+    <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="navTo('home')">RLOY</h1>
+    <div id="nav-user-area" class="flex gap-4">
+        <button onclick="checkAccess()" class="text-xs font-bold border border-white/10 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">LAUNCH CONSOLE</button>
+    </div>
+</nav>
 
-            <div class="relative z-10 max-w-3xl">
-                <div class="inline-block px-4 py-1.5 mb-6 rounded-full glass text-[10px] font-bold tracking-[0.2em] text-blue-400 uppercase">
-                    BKI Cloud Infrastructure
-                </div>
-                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-gradient leading-tight">
-                    Upload File, <br> Jadi Web Publik.
-                </h1>
-                <p class="text-gray-400 text-lg mb-10 leading-relaxed max-w-2xl mx-auto">
-                    Platform deployment mandiri milik <strong>PT Bangga Karya Indonesia</strong>. 
-                    Tinggal pilih file HTML Anda dan langsung online.
+<section id="p-home" class="min-h-screen pt-40 pb-20 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-32">
+            <h1 class="text-6xl md:text-9xl font-black tracking-tighter mb-8 italic">RLOY ENGINE.</h1>
+            <p class="text-gray-500 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-10">
+                Infrastruktur Deployment tercepat untuk publik, dikelola secara eksklusif oleh <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.
+            </p>
+            <button onclick="checkAccess()" class="btn-action !px-16 text-sm uppercase tracking-widest">Start Creating Website</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-box">
+                <div class="text-3xl mb-4">🎯</div>
+                <h3 class="text-xl font-bold mb-4">Visi & Misi</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Menghilangkan hambatan teknis bagi semua orang. Kami ingin siapapun bisa memiliki kehadiran digital tanpa harus belajar server atau coding yang rumit.
                 </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 text-left">
-                    <div class="p-5 glass rounded-2xl">
-                        <div class="text-blue-500 font-bold mb-1">Upload File</div>
-                        <p class="text-[11px] text-gray-500">Pilih file .html langsung dari galeri atau folder Anda.</p>
-                    </div>
-                    <div class="p-5 glass rounded-2xl">
-                        <div class="text-blue-500 font-bold mb-1">Global Access</div>
-                        <p class="text-[11px] text-gray-500">Website dapat diakses siapapun dengan link unik.</p>
-                    </div>
-                    <div class="p-5 glass rounded-2xl">
-                        <div class="text-blue-500 font-bold mb-1">Instant Live</div>
-                        <p class="text-[11px] text-gray-500">Tanpa proses build yang lama, langsung aktif.</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-center gap-6">
-                    <button onclick="startDeploy()" class="blue-gradient px-12 py-5 rounded-full font-bold text-lg hover:scale-105 transition shadow-[0_0_40px_rgba(59,130,246,0.3)]">
-                        Start Deploy Now
-                    </button>
-                    <div class="flex items-center gap-2 opacity-50">
-                        <span class="text-xs">Project by:</span>
-                        <span class="text-xs font-bold text-blue-400">@maramadhona</span>
-                    </div>
-                </div>
             </div>
-        </section>
+            <div class="glass-box">
+                <div class="text-3xl mb-4">🛡️</div>
+                <h3 class="text-xl font-bold mb-4">Keamanan</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Setiap website yang diterbitkan diproses melalui gerbang keamanan RMAIL OTP untuk memastikan kualitas dan integritas konten di jaringan kami.
+                </p>
+            </div>
+            <div class="glass-box">
+                <div class="text-3xl mb-4">⚡</div>
+                <h3 class="text-xl font-bold mb-4">Info Layanan</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    Gratis digunakan untuk publik melalui otentikasi mitra. Mendukung file HTML statis dengan link publik instan rloy.vercel.app/#namaweb.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <section id="deploy-page" class="hidden min-h-screen py-12 px-6 fade-in">
-            <div class="max-w-2xl mx-auto">
-                <div class="flex items-center justify-between mb-10 border-b border-white/5 pb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 blue-gradient rounded-xl flex items-center justify-center font-bold text-white">B</div>
-                        <h2 class="text-xl font-bold">BKI Engine</h2>
-                    </div>
-                    <button onclick="location.reload()" class="text-xs text-gray-500 hover:text-white transition">← Kembali</button>
-                </div>
+<section id="p-login" class="hidden min-h-screen flex items-center justify-center px-6">
+    <div class="glass-box max-w-sm w-full text-center">
+        <h2 class="text-2xl font-black mb-2 italic">RMAIL ACCESS</h2>
+        <p class="text-[10px] text-gray-500 mb-10 uppercase tracking-widest font-bold">Verifikasi Identitas Anda</p>
+        
+        <div id="auth-s1">
+            <input type="text" id="rmail-id" class="input-premium mb-4 text-center" placeholder="ID PENGGUNA RMAIL">
+            <button onclick="sendOTP()" class="btn-action w-full">Kirim Kode OTP</button>
+        </div>
 
-                <div class="glass rounded-3xl p-8 shadow-2xl space-y-8">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-3 ml-1 text-blue-400">1. Tentukan Nama Website</label>
-                        <div class="flex items-center gap-3 bg-black/40 border border-white/10 p-4 rounded-2xl focus-within:border-blue-500/50 transition">
-                            <span class="text-gray-600 text-sm">Rloy.app/</span>
-                            <input type="text" id="slug" placeholder="nama-proyek" class="bg-transparent border-none outline-none text-white w-full font-semibold">
+        <div id="auth-s2" class="hidden">
+            <input type="text" id="rmail-otp" class="input-premium mb-4 text-center text-3xl font-bold tracking-[10px]" maxlength="6">
+            <button onclick="verifyOTP()" class="btn-action w-full">Verifikasi & Masuk</button>
+        </div>
+    </div>
+</section>
+
+<section id="p-console" class="hidden min-h-screen pt-32 px-6 pb-20">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+            <div>
+                <h2 class="text-4xl font-black italic mb-2">My Workspace</h2>
+                <p class="text-gray-500 text-sm">Kelola dan deploy website baru Anda di sini.</p>
+            </div>
+            <div class="bg-white/5 px-6 py-3 rounded-xl border border-white/5">
+                <span id="user-tag" class="text-xs font-bold text-gray-400 uppercase tracking-widest">...</span>
+                <button onclick="logout()" class="ml-4 text-xs font-bold text-red-700">SIGNOUT</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-5">
+                <div class="glass-box border-white/5">
+                    <h4 class="text-xs font-bold text-gray-600 uppercase mb-8 tracking-widest">New Deployment</h4>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-3 uppercase">Slug Website</label>
+                            <input type="text" id="web-slug" class="input-premium" placeholder="nama-proyek-kamu">
                         </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-3 ml-1 text-blue-400">2. Pilih File HTML</label>
-                        <div onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-white/10 p-8 rounded-2xl text-center hover:border-blue-500/50 cursor-pointer bg-white/5 transition">
-                            <input type="file" id="file-input" accept=".html" class="hidden" onchange="handleFile(this)">
-                            <div id="file-info" class="text-gray-400">
-                                <p class="text-sm font-semibold">Klik untuk memilih file .html</p>
-                                <p class="text-[10px] mt-1 text-gray-600 uppercase">Maksimal 1MB</p>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-3 uppercase">File index.html</label>
+                            <div class="border-2 border-dashed border-white/5 p-12 text-center rounded-2xl hover:border-white transition relative cursor-pointer">
+                                <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
+                                <p id="file-label" class="text-xs font-bold text-gray-500">UPLOAD HTML FILE</p>
                             </div>
                         </div>
-                    </div>
-
-                    <button onclick="publishToCloud()" id="btn-publish" class="w-full blue-gradient py-5 rounded-2xl font-bold text-lg shadow-lg transform active:scale-95 transition">
-                        Luncurkan Website
-                    </button>
-
-                    <div id="result" class="hidden p-6 bg-blue-500/10 border border-blue-500/30 rounded-2xl text-center animate-bounce mt-4">
-                        <p class="text-blue-400 text-xs font-bold uppercase mb-2">Website sudah online!</p>
-                        <input type="text" id="share-url" readonly class="w-full bg-black/50 border border-white/5 p-3 rounded-xl text-xs text-center mb-4 text-blue-200 outline-none">
-                        <button onclick="copyUrl()" class="px-8 py-2 bg-white text-black rounded-full font-bold text-xs hover:bg-gray-200 transition">Salin Link</button>
+                        <button onclick="pushDeploy()" id="btn-deploy" class="btn-action w-full">PUBLISH WEBSITE 🚀</button>
+                        
+                        <div id="deploy-success" class="hidden p-6 bg-white rounded-xl text-black">
+                            <p class="text-[10px] font-black uppercase mb-1">Berhasil Diterbitkan:</p>
+                            <a id="final-url" href="#" target="_blank" class="text-sm font-bold underline break-all font-mono">rloy.io/#...</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
 
+            <div class="lg:col-span-7">
+                <h4 class="text-xs font-bold text-gray-600 uppercase mb-8 tracking-widest">Live Projects</h4>
+                <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
+            </div>
+        </div>
     </div>
+</section>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_caHmq9ayqjRLvdflwDrFsaJS-L282a4",
-            authDomain: "deploy-3ff5a.firebaseapp.com",
-            databaseURL: "https://deploy-3ff5a-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "deploy-3ff5a",
-            storageBucket: "deploy-3ff5a.firebasestorage.app",
-            messagingSenderId: "759372904208",
-            appId: "1:759372904208:web:3ecee87189ba8a95aad795",
-            measurementId: "G-Q79FBB907T"
+<script>
+    const fb = { databaseURL: "https://rmail-68719-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    firebase.initializeApp(fb);
+    const db = firebase.database();
+
+    let adminSession = localStorage.getItem('rloy_master_key') || "";
+    let htmlBuffer = "";
+
+    window.onload = () => {
+        const hash = window.location.hash.substring(1);
+        if(hash) return serve(hash);
+        if(adminSession) updateAuthUI();
+    };
+
+    function navTo(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('p-' + id).classList.remove('hidden');
+        if(id === 'console') loadProjects();
+        window.scrollTo(0,0);
+    }
+
+    function checkAccess() {
+        if(!adminSession) navTo('login');
+        else navTo('console');
+    }
+
+    // AUTH SYSTEM
+    function sendOTP() {
+        const u = document.getElementById('rmail-id').value.trim().toLowerCase();
+        db.ref('users/'+u).once('value', s => {
+            if(s.exists()) {
+                const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                db.ref('chats/'+[u,"verifyotp"].sort().join("_")).push({ s:"sys", t:"RLOY TOKEN: "+otp, time:Date.now() });
+                window.vToken = otp; window.vUser = u;
+                document.getElementById('auth-s1').classList.add('hidden');
+                document.getElementById('auth-s2').classList.remove('hidden');
+            } else alert("Username RMAIL tidak ditemukan.");
+        });
+    }
+
+    function verifyOTP() {
+        if(document.getElementById('rmail-otp').value === window.vToken) {
+            localStorage.setItem('rloy_master_key', window.vUser);
+            location.reload();
+        } else alert("Kode salah.");
+    }
+
+    function updateAuthUI() {
+        document.getElementById('user-tag').innerText = "Logged as: " + adminSession;
+    }
+
+    function logout() { localStorage.removeItem('rloy_master_key'); location.reload(); }
+
+    // DEPLOY SYSTEM
+    function readFile(input) {
+        const f = input.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            htmlBuffer = e.target.result;
+            document.getElementById('file-label').innerText = "READY: " + f.name;
         };
+        reader.readAsText(f);
+    }
 
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        let fileContent = "";
+    function pushDeploy() {
+        const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
+        if(!slug || !htmlBuffer) return alert("Lengkapi nama & file.");
 
-        function startDeploy() {
-            const home = document.getElementById('home-page');
-            const deploy = document.getElementById('deploy-page');
-            home.classList.add('fade-out');
-            setTimeout(() => {
-                home.style.display = 'none';
-                deploy.classList.remove('hidden');
-                window.scrollTo(0,0);
-            }, 500);
-        }
+        document.getElementById('btn-deploy').innerText = "PUBLISHING...";
 
-        // FUNGSI MEMBACA FILE
-        function handleFile(input) {
-            const file = input.files[0];
-            const fileInfo = document.getElementById('file-info');
-            
-            if (file) {
-                if (file.size > 1024 * 1024) {
-                    alert("File terlalu besar! Maksimal 1MB.");
-                    input.value = "";
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    fileContent = e.target.result;
-                    fileInfo.innerHTML = `<p class="text-blue-400 font-bold text-sm">✓ ${file.name}</p><p class="text-[10px] text-gray-500 uppercase">File siap dideploy</p>`;
-                };
-                reader.readAsText(file);
-            }
-        }
+        db.ref('sites/' + slug).set({
+            content: htmlBuffer,
+            owner: adminSession,
+            stats: { views: 0 },
+            time: new Date().toLocaleString()
+        }).then(() => {
+            const final = window.location.origin + "/#" + slug;
+            document.getElementById('final-url').innerText = "rloy.vercel.app/#" + slug;
+            document.getElementById('final-url').href = final;
+            document.getElementById('deploy-success').classList.remove('hidden');
+            document.getElementById('btn-deploy').innerText = "PUBLISH WEBSITE 🚀";
+            alert("Website Anda Live!");
+        });
+    }
 
-        function publishToCloud() {
-            const slug = document.getElementById('slug').value.trim().replace(/\s+/g, '-').toLowerCase();
-            
-            if(!slug) return alert("Beri nama website Anda!");
-            if(!fileContent) return alert("Silakan pilih file HTML terlebih dahulu!");
-
-            const btn = document.getElementById('btn-publish');
-            btn.innerText = "Processing Cloud...";
-            btn.disabled = true;
-
-            database.ref('sites/' + slug).set({
-                content: fileContent,
-                createdAt: Date.now()
-            }, (error) => {
-                btn.innerText = "Luncurkan Website";
-                btn.disabled = false;
-                if (error) alert("Gagal deploy.");
-                else {
-                    const finalUrl = window.location.origin + window.location.pathname + "?w=" + slug;
-                    document.getElementById('share-url').value = finalUrl;
-                    document.getElementById('result').classList.remove('hidden');
-                }
+    function loadProjects() {
+        db.ref('sites').orderByChild('owner').equalTo(adminSession).on('value', s => {
+            const list = document.getElementById('project-list');
+            list.innerHTML = "";
+            s.forEach(child => {
+                const d = child.val();
+                list.innerHTML += `
+                    <div class="glass-box !p-6 border-white/5">
+                        <div class="flex justify-between items-start mb-6">
+                            <h4 class="text-xl font-bold italic">/${child.key}</h4>
+                            <div class="text-right">
+                                <span class="text-3xl font-black">${d.stats ? d.stats.views : 0}</span>
+                                <p class="text-[9px] text-gray-500 uppercase">Visits</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 pt-4 border-t border-white/5">
+                            <a href="/#${child.key}" target="_blank" class="text-[10px] font-bold text-blue-500 underline uppercase">Live</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-bold text-red-900 uppercase">Hapus</button>
+                        </div>
+                    </div>`;
             });
-        }
+        });
+    }
 
-        function copyUrl() {
-            const copyText = document.getElementById('share-url');
-            copyText.select();
-            document.execCommand('copy');
-            alert("URL disalin ke clipboard!");
-        }
+    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
 
-        window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const webName = urlParams.get('w');
-            if (webName) {
-                document.getElementById('app-container').innerHTML = "<div style='height:100vh; display:flex; align-items:center; justify-content:center; color:#333; font-size:10px; letter-spacing:3px;'>BKI CLOUD LOADING...</div>";
-                database.ref('sites/' + webName).once('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        document.open();
-                        document.write(data.content);
-                        document.close();
-                    } else {
-                        document.body.innerHTML = "Project Not Found";
-                    }
-                });
-            }
-        };
-    </script>
+    function serve(h) {
+        db.ref('sites/'+h).once('value', s => {
+            if(s.exists()) {
+                db.ref('sites/'+h+'/stats/views').transaction(c => (c||0)+1);
+                document.open(); document.write(s.val().content); document.close();
+            } else location.href = "/";
+        });
+    }
+</script>
 </body>
 </html>
