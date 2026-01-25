@@ -18,6 +18,7 @@
         .btn-premium:hover { background: var(--accent-red); color: #fff; transform: scale(1.02); }
         .input-premium { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; width: 100%; color: #fff; outline: none; }
         
+        /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 45px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
@@ -37,7 +38,7 @@
     <section id="p-home" class="min-h-screen pt-48 pb-20 px-6">
         <div class="max-w-6xl mx-auto text-center">
             <h1 class="text-7xl md:text-[110px] font-black tracking-tighter italic leading-none mb-10">THE FUTURE<br>OF DEPLOY.</h1>
-            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 italic">Solusi deployment eksklusif untuk pemilik <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.</p>
+            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 italic">Eksklusif untuk infrastruktur <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.</p>
             <button onclick="checkAccess()" class="btn-premium px-20">MULAI SEKARANG</button>
         </div>
     </section>
@@ -62,7 +63,7 @@
             <div class="flex justify-between items-end mb-16">
                 <div>
                     <h2 class="text-5xl font-black italic tracking-tighter mb-2">Master Console</h2>
-                    <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Account: <span id="user-display" class="text-red-500">...</span></p>
+                    <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">User: <span id="user-display" class="text-red-500">...</span></p>
                 </div>
                 <button onclick="logout()" class="text-[10px] font-black text-red-700 uppercase border border-red-900/10 px-6 py-3 rounded-xl hover:bg-red-700 hover:text-white transition">Sign Out</button>
             </div>
@@ -94,16 +95,14 @@
     firebase.initializeApp(fb);
     const db = firebase.database();
 
-    // --- LOGIKA ROUTING UTAMA ---
     function handleRouting() {
         const hash = window.location.hash.substring(1);
         const app = document.getElementById('main-app');
         const engine = document.getElementById('render-engine');
 
-        // Jika ada hash dan bukan halaman internal
         if (hash && !['home', 'login', 'console'].includes(hash)) {
-            app.classList.add('hidden'); // Sembunyikan Landing Page RLOY
-            engine.classList.remove('hidden'); // Munculkan engine
+            app.classList.add('hidden');
+            engine.classList.remove('hidden');
 
             db.ref('sites/' + hash).on('value', s => {
                 if (s.exists()) {
@@ -113,30 +112,20 @@
                             <div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
                                 <div style="width:70px; height:70px; background:linear-gradient(45deg, #fe2c55, #0070f3); border-radius:20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:30px;">R</div>
                                 <h1 style="font-size:24px; font-weight:800; margin-bottom:5px;">WEBSITE MAINTENANCE</h1>
-                                <p style="color:#666; font-size:14px; max-width:400px; line-height:1.6;">Sedang ada perbaikan sistem. Mohon kembali nanti.</p>
+                                <p style="color:#666; font-size:14px; max-width:400px; line-height:1.6;">Sistem sedang diperbarui. Silakan kembali lagi nanti.</p>
                                 <div style="margin-top:40px; font-size:9px; color:#222; font-weight:bold; letter-spacing:2px;">PT BANGGA KARYA INDONESIA</div>
                             </div>`;
                     } else {
-                        // Render Website User
+                        // RENDER TANPA TOMBOL DASHBOARD (MURNI ISI FILE)
                         document.open();
                         document.write(data.content);
-                        
-                        // Tambahkan Tombol Back Dashboard (Khusus Owner)
-                        if (localStorage.getItem('rloy_master_key') === data.owner) {
-                            const b = document.createElement('button');
-                            b.innerText = "← DASHBOARD";
-                            Object.assign(b.style, { position:'fixed', bottom:'20px', right:'20px', background:'#000', color:'#fff', border:'1px solid #333', padding:'10px 15px', borderRadius:'50px', cursor:'pointer', fontSize:'10px', fontWeight:'800', zIndex:'999999' });
-                            b.onclick = () => { window.location.hash = "console"; location.reload(); };
-                            document.body.appendChild(b);
-                        }
                         document.close();
                     }
                 } else {
-                    engine.innerHTML = "<h1 style='color:white; text-align:center; padding-top:100px;'>404: Website Tidak Ditemukan</h1>";
+                    engine.innerHTML = "<div style='color:white; text-align:center; padding-top:100px; font-weight:bold;'>ERROR 404: SITE NOT FOUND</div>";
                 }
             });
         } else {
-            // Jika tidak ada hash proyek, tampilkan RLOY
             app.classList.remove('hidden');
             engine.classList.add('hidden');
             if (localStorage.getItem('rloy_master_key')) navTo('console');
@@ -145,9 +134,14 @@
     }
 
     window.onload = handleRouting;
-    window.onhashchange = () => location.reload(); // Paksa reload jika ganti proyek
+    window.onhashchange = () => {
+        // Jika pindah ke #home atau #console dari web deploy, reload agar UI muncul lagi
+        const h = window.location.hash;
+        if (h === "#home" || h === "#console") location.reload();
+        else handleRouting();
+    };
 
-    // --- DASHBOARD LOGIC ---
+    // --- DASHBOARD SYSTEM ---
     let adminSession = localStorage.getItem('rloy_master_key') || "";
     let htmlBuffer = "";
     let generatedOTP = "";
