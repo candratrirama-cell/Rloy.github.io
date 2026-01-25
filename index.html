@@ -3,58 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RLOY v2 | PT Bangga Karya Indonesia</title>
+    <title>RLOY v2 | Member Console</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
     <style>
         :root { --b-black: #000; --accent-red: #fe2c55; }
-        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; margin:0; }
+        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; margin:0; overflow-x: hidden; }
         .hidden { display: none !important; }
         .glass-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 30px; padding: 35px; }
         .btn-premium { background: #fff; color: #000; padding: 18px 32px; border-radius: 18px; font-weight: 800; transition: 0.4s; cursor: pointer; border: none; }
         .btn-premium:hover { background: var(--accent-red); color: #fff; transform: scale(1.02); }
-        .input-premium { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; width: 100%; color: #fff; outline: none; }
-        
-        /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 45px; height: 24px; }
+        .input-premium { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; width: 100%; color: #fff; outline: none; margin-bottom: 12px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #00ff88; }
-        input:checked + .slider:before { transform: translateX(21px); }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
 
 <div id="main-app">
-    <nav class="fixed top-0 w-full z-[100] bg-black/50 backdrop-blur-xl px-6 md:px-12 py-5 flex justify-between items-center border-b border-white/5">
-        <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="location.href='/'">RLOY</h1>
+    <nav class="fixed top-0 w-full z-[100] bg-black/50 backdrop-blur-xl px-6 py-5 flex justify-between items-center border-b border-white/5">
+        <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="location.reload()">RLOY</h1>
         <div class="text-[9px] font-bold text-gray-600 uppercase tracking-[0.3em]">PT Bangga Karya Indonesia</div>
     </nav>
 
-    <section id="p-home" class="min-h-screen pt-48 pb-20 px-6">
-        <div class="max-w-6xl mx-auto text-center">
-            <h1 class="text-7xl md:text-[110px] font-black tracking-tighter italic leading-none mb-10">THE FUTURE<br>OF DEPLOY.</h1>
-            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 italic">Eksklusif untuk infrastruktur <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.</p>
-            <button onclick="checkAccess()" class="btn-premium px-20">MULAI SEKARANG</button>
-        </div>
-    </section>
-
-    <section id="p-login" class="hidden min-h-screen flex items-center justify-center px-6">
+    <section id="p-gate" class="hidden min-h-screen flex items-center justify-center px-6">
         <div class="w-full max-w-sm glass-box text-center">
-            <div id="step-1">
-                <h2 class="text-2xl font-black italic mb-8 uppercase tracking-widest">Login RMAIL</h2>
-                <input type="text" id="target-id" placeholder="USERNAME" class="input-premium text-center uppercase mb-6 font-bold">
-                <button onclick="sendOTP()" id="btn-otp" class="w-full btn-premium">GET OTP</button>
-            </div>
-            <div id="step-2" class="hidden">
-                <h2 class="text-2xl font-black mb-8">VERIFY</h2>
-                <input type="text" id="otp-val" placeholder="000000" maxlength="6" class="input-premium text-center text-4xl font-black tracking-[10px] mb-6">
-                <button onclick="verifyOTP()" class="w-full btn-premium">VERIFY</button>
-            </div>
+            <h2 class="text-2xl font-black italic mb-8 uppercase tracking-widest">Akses Console</h2>
+            <input type="text" id="user-id" placeholder="USERNAME" class="input-premium text-center uppercase font-bold">
+            <input type="password" id="user-pw" placeholder="PASSWORD" class="input-premium text-center font-bold">
+            <button onclick="handleAuth()" class="w-full btn-premium mb-4">MASUK / DAFTAR</button>
+            <br>
+            <a href="https://wa.me/62882008519349" target="_blank" class="text-[10px] text-gray-500 hover:text-white transition uppercase font-bold tracking-widest">Lupa Password? Chat Admin</a>
         </div>
     </section>
 
@@ -62,27 +47,23 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-end mb-16">
                 <div>
-                    <h2 class="text-5xl font-black italic tracking-tighter mb-2">Master Console</h2>
-                    <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">User: <span id="user-display" class="text-red-500">...</span></p>
+                    <h2 class="text-5xl font-black italic tracking-tighter mb-2">My Console</h2>
+                    <p class="text-red-500 font-bold text-xs uppercase" id="display-name"></p>
                 </div>
-                <button onclick="logout()" class="text-[10px] font-black text-red-700 uppercase border border-red-900/10 px-6 py-3 rounded-xl hover:bg-red-700 hover:text-white transition">Sign Out</button>
+                <button onclick="logout()" class="text-[9px] font-black text-gray-500 uppercase border border-white/10 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition">Logout</button>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div class="lg:col-span-5">
                     <div class="glass-box">
-                        <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-8">New Deployment</h4>
-                        <input type="text" id="web-slug" class="input-premium mb-6" placeholder="nama-slug">
-                        <div class="border-2 border-dashed border-white/5 p-16 rounded-3xl relative text-center mb-6">
+                        <input type="text" id="web-slug" class="input-premium" placeholder="nama-slug-website">
+                        <div class="border-2 border-dashed border-white/5 p-16 rounded-3xl relative text-center mb-6 group hover:border-white transition cursor-pointer">
                             <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
                             <p id="file-label" class="text-[10px] font-black text-gray-500 uppercase">Upload index.html</p>
                         </div>
-                        <button onclick="pushDeploy()" id="btn-deploy" class="w-full btn-premium">PUBLISH</button>
+                        <button onclick="pushDeploy()" class="w-full btn-premium">PUBLISH</button>
                     </div>
                 </div>
-                <div class="lg:col-span-7">
-                    <div id="project-list" class="grid grid-cols-1 gap-6"></div>
-                </div>
+                <div class="lg:col-span-7"><div id="project-list" class="grid grid-cols-1 gap-6"></div></div>
             </div>
         </div>
     </section>
@@ -95,158 +76,101 @@
     firebase.initializeApp(fb);
     const db = firebase.database();
 
+    let htmlBuffer = "";
+    let currentOwner = localStorage.getItem('rloy_session_user') || "";
+
     function handleRouting() {
         const hash = window.location.hash.substring(1);
         const app = document.getElementById('main-app');
         const engine = document.getElementById('render-engine');
 
-        if (hash && !['home', 'login', 'console'].includes(hash)) {
+        if (hash && !['console', 'gate'].includes(hash)) {
             app.classList.add('hidden');
             engine.classList.remove('hidden');
-
             db.ref('sites/' + hash).on('value', s => {
                 if (s.exists()) {
-                    const data = s.val();
-                    if (data.status === "off") {
-                        engine.innerHTML = `
-                            <div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                                <div style="width:70px; height:70px; background:linear-gradient(45deg, #fe2c55, #0070f3); border-radius:20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:30px;">R</div>
-                                <h1 style="font-size:24px; font-weight:800; margin-bottom:5px;">WEBSITE MAINTENANCE</h1>
-                                <p style="color:#666; font-size:14px; max-width:400px; line-height:1.6;">Sistem sedang diperbarui. Silakan kembali lagi nanti.</p>
-                                <div style="margin-top:40px; font-size:9px; color:#222; font-weight:bold; letter-spacing:2px;">PT BANGGA KARYA INDONESIA</div>
-                            </div>`;
+                    const d = s.val();
+                    if (d.status === "banned") {
+                        engine.innerHTML = `<div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-family:sans-serif;"><h1>WEBSITE DIBLOKIR</h1><p>Melanggar peraturan RLOY / PT BKI.</p></div>`;
+                    } else if (d.status === "off") {
+                        engine.innerHTML = `<div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; align-items:center; justify-content:center;"><h1>MAINTENANCE</h1></div>`;
                     } else {
-                        // RENDER TANPA TOMBOL DASHBOARD (MURNI ISI FILE)
-                        document.open();
-                        document.write(data.content);
-                        document.close();
+                        document.open(); document.write(d.content); document.close();
                     }
-                } else {
-                    engine.innerHTML = "<div style='color:white; text-align:center; padding-top:100px; font-weight:bold;'>ERROR 404: SITE NOT FOUND</div>";
                 }
             });
         } else {
             app.classList.remove('hidden');
             engine.classList.add('hidden');
-            if (localStorage.getItem('rloy_master_key')) navTo('console');
-            else navTo('home');
+            if (!currentOwner) showPage('gate');
+            else {
+                document.getElementById('display-name').innerText = "USER: " + currentOwner.toUpperCase();
+                showPage('console');
+                loadProjects();
+            }
         }
     }
 
-    window.onload = handleRouting;
-    window.onhashchange = () => {
-        // Jika pindah ke #home atau #console dari web deploy, reload agar UI muncul lagi
-        const h = window.location.hash;
-        if (h === "#home" || h === "#console") location.reload();
-        else handleRouting();
-    };
-
-    // --- DASHBOARD SYSTEM ---
-    let adminSession = localStorage.getItem('rloy_master_key') || "";
-    let htmlBuffer = "";
-    let generatedOTP = "";
-    let targetUser = "";
-
-    function navTo(id) {
+    function showPage(id) {
         document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
         document.getElementById('p-' + id).classList.remove('hidden');
-        if (id === 'console') {
-            document.getElementById('user-display').innerText = adminSession;
-            loadProjects();
-        }
-        window.history.pushState(null, null, '#' + id);
     }
 
-    function checkAccess() {
-        if (adminSession) navTo('console');
-        else navTo('login');
-    }
-
-    function loadProjects() {
-        const list = document.getElementById('project-list');
-        db.ref('sites').orderByChild('owner').equalTo(adminSession).on('value', s => {
-            list.innerHTML = "";
-            if(!s.exists()) {
-                list.innerHTML = "<p class='text-gray-700 italic uppercase text-[9px] tracking-widest'>Belum ada proyek.</p>";
-                return;
-            }
-            s.forEach(child => {
-                const d = child.val();
-                const isOff = d.status === 'off';
-                list.innerHTML += `
-                    <div class="glass-box !p-8 flex items-center justify-between border-white/5">
-                        <div class="flex-1">
-                            <h4 class="text-xl font-black italic mb-1">/${child.key}</h4>
-                            <p class="text-[8px] font-bold text-gray-600 uppercase tracking-widest">${d.time} • ${d.stats ? d.stats.views : 0} VIEWS</p>
-                        </div>
-                        <div class="flex items-center gap-8">
-                            <div class="text-right">
-                                <p class="text-[8px] font-black mb-1 ${isOff ? 'text-red-500' : 'text-green-500'} uppercase">${isOff ? 'OFF' : 'ON'}</p>
-                                <label class="switch">
-                                    <input type="checkbox" ${isOff ? '' : 'checked'} onchange="toggleStatus('${child.key}', '${d.status}')">
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="#${child.key}" class="bg-white/5 p-3 rounded-xl hover:bg-white hover:text-black transition text-[9px] font-black uppercase">Open</a>
-                                <button onclick="delSite('${child.key}')" class="bg-red-950/20 p-3 rounded-xl text-red-700 text-[9px] font-black uppercase">Del</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        });
-    }
-
-    function sendOTP() {
-        targetUser = document.getElementById('target-id').value.trim().toLowerCase();
-        if (!targetUser) return;
-        db.ref('users/'+targetUser).once('value', s => {
+    function handleAuth() {
+        const id = document.getElementById('user-id').value.trim().toLowerCase();
+        const pw = document.getElementById('user-pw').value.trim();
+        if (!id || !pw) return alert("Lengkapi data!");
+        db.ref('users_rloy/' + id).once('value', s => {
             if (s.exists()) {
-                generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-                const now = Date.now();
-                const rid = [targetUser, "verifyotp"].sort().join("_");
-                db.ref('chats/'+rid).push({ s: "verifyotp", t: "TOKEN LOGIN: " + generatedOTP, time: now }).then(() => {
-                    db.ref('mylists/'+targetUser+'/verifyotp').transaction(v => { return { last: now, unread: ((v && v.unread) || 0) + 1 }; });
-                    document.getElementById('step-1').classList.add('hidden');
-                    document.getElementById('step-2').classList.remove('hidden');
-                });
-            } else alert("User tidak ditemukan.");
+                if (s.val().pw === pw) { loginSuccess(id); } else { alert("Password salah!"); }
+            } else {
+                if (confirm("Daftar user baru?")) {
+                    db.ref('users_rloy/' + id).set({ pw: pw, created: new Date().toLocaleString() }).then(() => loginSuccess(id));
+                }
+            }
         });
     }
 
-    function verifyOTP() {
-        if (document.getElementById('otp-val').value.trim() === generatedOTP) {
-            localStorage.setItem('rloy_master_key', targetUser);
-            adminSession = targetUser;
-            navTo('console');
-        } else alert("OTP Salah.");
-    }
-
-    function logout() { localStorage.removeItem('rloy_master_key'); location.reload(); }
+    function loginSuccess(id) { localStorage.setItem('rloy_session_user', id); currentOwner = id; handleRouting(); }
+    function logout() { localStorage.removeItem('rloy_session_user'); location.reload(); }
 
     function readFile(input) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            htmlBuffer = e.target.result;
-            document.getElementById('file-label').innerText = input.files[0].name.toUpperCase();
-        };
+        reader.onload = (e) => { htmlBuffer = e.target.result; document.getElementById('file-label').innerText = "READY"; };
         reader.readAsText(input.files[0]);
     }
 
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if (!slug || !htmlBuffer) return alert("Isi slug & upload file!");
-        db.ref('sites/' + slug).set({
-            content: htmlBuffer, owner: adminSession, stats: { views: 0 }, time: new Date().toLocaleString(), status: "on"
-        }).then(() => { alert("Live!"); loadProjects(); });
+        if (!slug || !htmlBuffer) return alert("Error!");
+        db.ref('sites/' + slug).set({ content: htmlBuffer, owner: currentOwner, time: new Date().toLocaleString(), status: "on" })
+        .then(() => { alert("Live!"); loadProjects(); });
+    }
+
+    function loadProjects() {
+        const list = document.getElementById('project-list');
+        db.ref('sites').orderByChild('owner').equalTo(currentOwner).on('value', s => {
+            list.innerHTML = "";
+            s.forEach(child => {
+                const d = child.val();
+                list.innerHTML += `<div class="glass-box !p-6 flex justify-between items-center">
+                    <div><h4 class="font-bold italic">/${child.key}</h4></div>
+                    <div class="flex items-center gap-4">
+                        <label class="switch"><input type="checkbox" ${d.status === 'on' ? 'checked' : ''} onchange="toggleStatus('${child.key}','${d.status}')"><span class="slider"></span></label>
+                        <a href="#${child.key}" class="text-[9px] font-bold border border-white/10 px-3 py-2 rounded">OPEN</a>
+                    </div>
+                </div>`;
+            });
+        });
     }
 
     function toggleStatus(slug, current) {
-        const next = current === 'on' ? 'off' : 'on';
-        db.ref('sites/' + slug).update({ status: next });
+        if(current === 'banned') return alert("Diblokir Admin!");
+        db.ref('sites/' + slug).child('status').set(current === 'on' ? 'off' : 'on');
     }
 
-    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
+    window.onload = handleRouting;
+    window.onhashchange = handleRouting;
 </script>
 </body>
 </html>
