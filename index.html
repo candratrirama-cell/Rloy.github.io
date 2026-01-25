@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RLOY v2 | Master Hub PT BKI</title>
+    <title>RLOY v2 | PT Bangga Karya Indonesia</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,14 +11,13 @@
     
     <style>
         :root { --b-black: #000; --accent-red: #fe2c55; }
-        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; margin:0; }
         .hidden { display: none !important; }
         .glass-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 30px; padding: 35px; }
-        .btn-premium { background: #fff; color: #000; padding: 18px 32px; border-radius: 18px; font-weight: 800; transition: 0.4s; cursor: pointer; text-align: center; border: none; }
+        .btn-premium { background: #fff; color: #000; padding: 18px 32px; border-radius: 18px; font-weight: 800; transition: 0.4s; cursor: pointer; border: none; }
         .btn-premium:hover { background: var(--accent-red); color: #fff; transform: scale(1.02); }
         .input-premium { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; width: 100%; color: #fff; outline: none; }
         
-        /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 45px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
@@ -29,121 +28,130 @@
 </head>
 <body>
 
+<div id="main-app">
+    <nav class="fixed top-0 w-full z-[100] bg-black/50 backdrop-blur-xl px-6 md:px-12 py-5 flex justify-between items-center border-b border-white/5">
+        <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="location.href='/'">RLOY</h1>
+        <div class="text-[9px] font-bold text-gray-600 uppercase tracking-[0.3em]">PT Bangga Karya Indonesia</div>
+    </nav>
+
+    <section id="p-home" class="min-h-screen pt-48 pb-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-7xl md:text-[110px] font-black tracking-tighter italic leading-none mb-10">THE FUTURE<br>OF DEPLOY.</h1>
+            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-12 italic">Solusi deployment eksklusif untuk pemilik <span class="text-white font-bold">PT Bangga Karya Indonesia</span>.</p>
+            <button onclick="checkAccess()" class="btn-premium px-20">MULAI SEKARANG</button>
+        </div>
+    </section>
+
+    <section id="p-login" class="hidden min-h-screen flex items-center justify-center px-6">
+        <div class="w-full max-w-sm glass-box text-center">
+            <div id="step-1">
+                <h2 class="text-2xl font-black italic mb-8 uppercase tracking-widest">Login RMAIL</h2>
+                <input type="text" id="target-id" placeholder="USERNAME" class="input-premium text-center uppercase mb-6 font-bold">
+                <button onclick="sendOTP()" id="btn-otp" class="w-full btn-premium">GET OTP</button>
+            </div>
+            <div id="step-2" class="hidden">
+                <h2 class="text-2xl font-black mb-8">VERIFY</h2>
+                <input type="text" id="otp-val" placeholder="000000" maxlength="6" class="input-premium text-center text-4xl font-black tracking-[10px] mb-6">
+                <button onclick="verifyOTP()" class="w-full btn-premium">VERIFY</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="p-console" class="hidden min-h-screen pt-32 px-6 pb-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <h2 class="text-5xl font-black italic tracking-tighter mb-2">Master Console</h2>
+                    <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Account: <span id="user-display" class="text-red-500">...</span></p>
+                </div>
+                <button onclick="logout()" class="text-[10px] font-black text-red-700 uppercase border border-red-900/10 px-6 py-3 rounded-xl hover:bg-red-700 hover:text-white transition">Sign Out</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-5">
+                    <div class="glass-box">
+                        <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-8">New Deployment</h4>
+                        <input type="text" id="web-slug" class="input-premium mb-6" placeholder="nama-slug">
+                        <div class="border-2 border-dashed border-white/5 p-16 rounded-3xl relative text-center mb-6">
+                            <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
+                            <p id="file-label" class="text-[10px] font-black text-gray-500 uppercase">Upload index.html</p>
+                        </div>
+                        <button onclick="pushDeploy()" id="btn-deploy" class="w-full btn-premium">PUBLISH</button>
+                    </div>
+                </div>
+                <div class="lg:col-span-7">
+                    <div id="project-list" class="grid grid-cols-1 gap-6"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="render-engine" class="hidden"></div>
+
 <script>
     const fb = { databaseURL: "https://rmail-68719-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(fb);
     const db = firebase.database();
 
-    // --- REAL-TIME SERVER ENGINE ---
-    const currentHash = window.location.hash.substring(1);
-    if (currentHash && !['home', 'login', 'console'].includes(currentHash)) {
-        // Menggunakan .on agar web berubah otomatis saat status diganti pemilik
-        db.ref('sites/' + currentHash).on('value', s => {
-            if (s.exists()) {
-                const data = s.val();
-                if (data.status === "off") {
-                    document.body.innerHTML = `
-                        <div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; text-align:center; position:fixed; top:0; left:0; z-index:999999;">
-                            <div style="width:80px; height:80px; background:linear-gradient(to right, #fe2c55, #0070f3); border-radius:22px; margin-bottom:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:40px; color:white;">R</div>
-                            <h1 style="font-size:26px; font-weight:900; margin-bottom:10px; letter-spacing:-1px;">WEBSITE UNDER MAINTENANCE</h1>
-                            <p style="color:#666; font-size:14px; max-width:450px; line-height:1.6; padding:0 20px;">Pemilik situs sedang melakukan pembaruan sistem atau perbaikan konten. Harap tunggu beberapa saat.</p>
-                            <div style="margin-top:50px; font-size:10px; color:#222; letter-spacing:3px; font-weight:bold;">POWERED BY PT BANGGA KARYA INDONESIA</div>
-                        </div>`;
-                } else {
-                    // Jika ON, muat konten (Refresh diperlukan hanya jika transisi dari OFF ke ON pertama kali)
-                    if (document.getElementById('mt-screen')) location.reload(); 
-                    
-                    db.ref('sites/' + currentHash + '/stats/views').transaction(c => (c || 0) + 1);
-                    document.open();
-                    document.write(data.content);
-                    
-                    const masterKey = localStorage.getItem('rloy_master_key');
-                    if (masterKey === data.owner) {
-                        const btn = document.createElement('div');
-                        btn.innerHTML = `<button onclick="window.location.href='${window.location.origin}'" style="position:fixed; bottom:20px; right:20px; background:#000; color:#fff; border:1px solid #333; padding:12px 20px; border-radius:50px; cursor:pointer; font-family:sans-serif; font-size:10px; font-weight:bold; z-index:999999;">← KE DASHBOARD</button>`;
-                        document.body.appendChild(btn);
+    // --- LOGIKA ROUTING UTAMA ---
+    function handleRouting() {
+        const hash = window.location.hash.substring(1);
+        const app = document.getElementById('main-app');
+        const engine = document.getElementById('render-engine');
+
+        // Jika ada hash dan bukan halaman internal
+        if (hash && !['home', 'login', 'console'].includes(hash)) {
+            app.classList.add('hidden'); // Sembunyikan Landing Page RLOY
+            engine.classList.remove('hidden'); // Munculkan engine
+
+            db.ref('sites/' + hash).on('value', s => {
+                if (s.exists()) {
+                    const data = s.val();
+                    if (data.status === "off") {
+                        engine.innerHTML = `
+                            <div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                                <div style="width:70px; height:70px; background:linear-gradient(45deg, #fe2c55, #0070f3); border-radius:20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:30px;">R</div>
+                                <h1 style="font-size:24px; font-weight:800; margin-bottom:5px;">WEBSITE MAINTENANCE</h1>
+                                <p style="color:#666; font-size:14px; max-width:400px; line-height:1.6;">Sedang ada perbaikan sistem. Mohon kembali nanti.</p>
+                                <div style="margin-top:40px; font-size:9px; color:#222; font-weight:bold; letter-spacing:2px;">PT BANGGA KARYA INDONESIA</div>
+                            </div>`;
+                    } else {
+                        // Render Website User
+                        document.open();
+                        document.write(data.content);
+                        
+                        // Tambahkan Tombol Back Dashboard (Khusus Owner)
+                        if (localStorage.getItem('rloy_master_key') === data.owner) {
+                            const b = document.createElement('button');
+                            b.innerText = "← DASHBOARD";
+                            Object.assign(b.style, { position:'fixed', bottom:'20px', right:'20px', background:'#000', color:'#fff', border:'1px solid #333', padding:'10px 15px', borderRadius:'50px', cursor:'pointer', fontSize:'10px', fontWeight:'800', zIndex:'999999' });
+                            b.onclick = () => { window.location.hash = "console"; location.reload(); };
+                            document.body.appendChild(b);
+                        }
+                        document.close();
                     }
-                    document.close();
+                } else {
+                    engine.innerHTML = "<h1 style='color:white; text-align:center; padding-top:100px;'>404: Website Tidak Ditemukan</h1>";
                 }
-            }
-        });
+            });
+        } else {
+            // Jika tidak ada hash proyek, tampilkan RLOY
+            app.classList.remove('hidden');
+            engine.classList.add('hidden');
+            if (localStorage.getItem('rloy_master_key')) navTo('console');
+            else navTo('home');
+        }
     }
-</script>
 
-<nav class="fixed top-0 w-full z-[100] bg-black/50 backdrop-blur-xl px-6 md:px-12 py-5 flex justify-between items-center border-bottom border-white/5">
-    <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="navTo('home')">RLOY</h1>
-    <div class="text-[9px] font-bold text-gray-600 uppercase tracking-[0.3em]">PT Bangga Karya Indonesia</div>
-</nav>
+    window.onload = handleRouting;
+    window.onhashchange = () => location.reload(); // Paksa reload jika ganti proyek
 
-<section id="p-home" class="min-h-screen pt-48 pb-20 px-6">
-    <div class="max-w-6xl mx-auto text-center">
-        <h1 class="text-7xl md:text-[110px] font-black tracking-tighter italic leading-none mb-10">THE FUTURE<br>OF DEPLOY.</h1>
-        <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto mb-12">Deployment instan eksklusif untuk ekosistem <span class="text-white font-bold">PT BKI</span>.</p>
-        <button onclick="checkAccess()" class="btn-premium px-20">MULAI SEKARANG</button>
-    </div>
-</section>
-
-<section id="p-login" class="hidden min-h-screen flex items-center justify-center px-6">
-    <div class="w-full max-w-sm glass-box text-center">
-        <div id="step-1">
-            <h2 class="text-2xl font-black italic mb-8 uppercase tracking-widest">Login RMAIL</h2>
-            <input type="text" id="target-id" placeholder="USERNAME" class="input-premium text-center uppercase mb-6 font-bold">
-            <button onclick="sendOTP()" id="btn-otp" class="w-full btn-premium">GET OTP</button>
-        </div>
-        <div id="step-2" class="hidden">
-            <h2 class="text-2xl font-black mb-8">VERIFY</h2>
-            <input type="text" id="otp-val" placeholder="000000" maxlength="6" class="input-premium text-center text-4xl font-black tracking-[10px] mb-6">
-            <button onclick="verifyOTP()" class="w-full btn-premium">VERIFY</button>
-        </div>
-    </div>
-</section>
-
-<section id="p-console" class="hidden min-h-screen pt-32 px-6 pb-20">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-16">
-            <div>
-                <h2 class="text-5xl font-black italic tracking-tighter mb-2">Master Console</h2>
-                <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Account: <span id="user-display" class="text-red-500">...</span></p>
-            </div>
-            <button onclick="logout()" class="text-[10px] font-black text-red-700 uppercase border border-red-900/10 px-6 py-3 rounded-xl hover:bg-red-700 hover:text-white transition">Sign Out</button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div class="lg:col-span-5">
-                <div class="glass-box">
-                    <h4 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-8">New Deployment</h4>
-                    <input type="text" id="web-slug" class="input-premium mb-6" placeholder="nama-slug">
-                    <div class="border-2 border-dashed border-white/5 p-16 rounded-3xl relative text-center mb-6">
-                        <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
-                        <p id="file-label" class="text-[10px] font-black text-gray-500 uppercase">Upload index.html</p>
-                    </div>
-                    <button onclick="pushDeploy()" id="btn-deploy" class="w-full btn-premium">PUBLISH</button>
-                </div>
-            </div>
-            <div class="lg:col-span-7">
-                <div id="project-list" class="grid grid-cols-1 gap-6"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script>
+    // --- DASHBOARD LOGIC ---
     let adminSession = localStorage.getItem('rloy_master_key') || "";
     let htmlBuffer = "";
     let generatedOTP = "";
     let targetUser = "";
-
-    window.onload = () => {
-        if (!window.location.hash || window.location.hash === "#home") {
-            if (adminSession) navTo('console');
-            else navTo('home');
-        }
-    };
-
-    function checkAccess() {
-        if (adminSession) navTo('console');
-        else navTo('login');
-    }
 
     function navTo(id) {
         document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
@@ -155,12 +163,17 @@
         window.history.pushState(null, null, '#' + id);
     }
 
+    function checkAccess() {
+        if (adminSession) navTo('console');
+        else navTo('login');
+    }
+
     function loadProjects() {
         const list = document.getElementById('project-list');
         db.ref('sites').orderByChild('owner').equalTo(adminSession).on('value', s => {
             list.innerHTML = "";
             if(!s.exists()) {
-                list.innerHTML = "<p class='text-gray-700 italic uppercase text-[10px]'>Belum ada proyek.</p>";
+                list.innerHTML = "<p class='text-gray-700 italic uppercase text-[9px] tracking-widest'>Belum ada proyek.</p>";
                 return;
             }
             s.forEach(child => {
@@ -181,7 +194,7 @@
                                 </label>
                             </div>
                             <div class="flex gap-2">
-                                <a href="/#${child.key}" target="_blank" class="bg-white/5 p-3 rounded-xl hover:bg-white hover:text-black transition text-[9px] font-black uppercase">Open</a>
+                                <a href="#${child.key}" class="bg-white/5 p-3 rounded-xl hover:bg-white hover:text-black transition text-[9px] font-black uppercase">Open</a>
                                 <button onclick="delSite('${child.key}')" class="bg-red-950/20 p-3 rounded-xl text-red-700 text-[9px] font-black uppercase">Del</button>
                             </div>
                         </div>
@@ -203,7 +216,7 @@
                     document.getElementById('step-1').classList.add('hidden');
                     document.getElementById('step-2').classList.remove('hidden');
                 });
-            } else alert("Username salah!");
+            } else alert("User tidak ditemukan.");
         });
     }
 
@@ -212,13 +225,10 @@
             localStorage.setItem('rloy_master_key', targetUser);
             adminSession = targetUser;
             navTo('console');
-        } else alert("OTP Salah!");
+        } else alert("OTP Salah.");
     }
 
-    function logout() {
-        localStorage.removeItem('rloy_master_key');
-        location.reload();
-    }
+    function logout() { localStorage.removeItem('rloy_master_key'); location.reload(); }
 
     function readFile(input) {
         const reader = new FileReader();
@@ -231,10 +241,10 @@
 
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if (!slug || !htmlBuffer) return alert("Lengkapi data!");
+        if (!slug || !htmlBuffer) return alert("Isi slug & upload file!");
         db.ref('sites/' + slug).set({
             content: htmlBuffer, owner: adminSession, stats: { views: 0 }, time: new Date().toLocaleString(), status: "on"
-        }).then(() => { alert("Sukses!"); loadProjects(); });
+        }).then(() => { alert("Live!"); loadProjects(); });
     }
 
     function toggleStatus(slug, current) {
@@ -242,7 +252,7 @@
         db.ref('sites/' + slug).update({ status: next });
     }
 
-    function delSite(k) { if(confirm("Hapus proyek?")) db.ref('sites/'+k).remove(); }
+    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
 </script>
 </body>
 </html>
