@@ -2,175 +2,148 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RLOY v2 | Member Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLOY | Admin Central PT BKI</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --b-black: #000; --accent-red: #fe2c55; }
-        body { background: var(--b-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; margin:0; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+        .input-premium { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 16px; border-radius: 12px; width: 100%; color: #fff; margin-bottom: 12px; outline: none; }
+        .input-premium:focus { border-color: #fe2c55; }
+        .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; }
+        .btn-bki:hover { background: #fe2c55; color: #fff; }
         .hidden { display: none !important; }
-        .glass-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 30px; padding: 35px; }
-        .btn-premium { background: #fff; color: #000; padding: 18px 32px; border-radius: 18px; font-weight: 800; transition: 0.4s; cursor: pointer; border: none; }
-        .btn-premium:hover { background: var(--accent-red); color: #fff; transform: scale(1.02); }
-        .input-premium { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; width: 100%; color: #fff; outline: none; margin-bottom: 12px; }
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #00ff88; }
-        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
-<body>
+<body class="p-6">
 
-<div id="main-app">
-    <nav class="fixed top-0 w-full z-[100] bg-black/50 backdrop-blur-xl px-6 py-5 flex justify-between items-center border-b border-white/5">
-        <h1 class="text-3xl font-black italic tracking-tighter cursor-pointer" onclick="location.reload()">RLOY</h1>
-        <div class="text-[9px] font-bold text-gray-600 uppercase tracking-[0.3em]">PT Bangga Karya Indonesia</div>
-    </nav>
-
-    <section id="p-gate" class="hidden min-h-screen flex items-center justify-center px-6">
-        <div class="w-full max-w-sm glass-box text-center">
-            <h2 class="text-2xl font-black italic mb-8 uppercase tracking-widest">Akses Console</h2>
-            <input type="text" id="user-id" placeholder="USERNAME" class="input-premium text-center uppercase font-bold">
-            <input type="password" id="user-pw" placeholder="PASSWORD" class="input-premium text-center font-bold">
-            <button onclick="handleAuth()" class="w-full btn-premium mb-4">MASUK / DAFTAR</button>
-            <br>
-            <a href="https://wa.me/62882008519349" target="_blank" class="text-[10px] text-gray-500 hover:text-white transition uppercase font-bold tracking-widest">Lupa Password? Chat Admin</a>
+    <section id="login-page" class="min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-sm glass p-10 text-center">
+            <h1 class="text-4xl font-black italic mb-2">RLOY.</h1>
+            <p class="text-gray-500 text-[10px] uppercase tracking-widest mb-10">PT Bangga Karya Indonesia</p>
+            
+            <input type="text" id="user-in" placeholder="Username" class="input-premium">
+            <input type="password" id="pass-in" placeholder="Password" class="input-premium">
+            <button onclick="checkAdmin()" class="btn-bki">MASUK KE DASHBOARD</button>
         </div>
     </section>
 
-    <section id="p-console" class="hidden min-h-screen pt-32 px-6 pb-20">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-16">
-                <div>
-                    <h2 class="text-5xl font-black italic tracking-tighter mb-2">My Console</h2>
-                    <p class="text-red-500 font-bold text-xs uppercase" id="display-name"></p>
-                </div>
-                <button onclick="logout()" class="text-[9px] font-black text-gray-500 uppercase border border-white/10 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition">Logout</button>
+    <section id="admin-page" class="hidden max-w-6xl mx-auto pt-20 pb-20">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <h2 class="text-4xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
+                <p class="text-gray-500">Status: <span class="text-green-500 font-bold uppercase text-xs">Full Access Granted</span></p>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                <div class="lg:col-span-5">
-                    <div class="glass-box">
-                        <input type="text" id="web-slug" class="input-premium" placeholder="nama-slug-website">
-                        <div class="border-2 border-dashed border-white/5 p-16 rounded-3xl relative text-center mb-6 group hover:border-white transition cursor-pointer">
-                            <input type="file" id="web-file" accept=".html" class="absolute inset-0 opacity-0 cursor-pointer" onchange="readFile(this)">
-                            <p id="file-label" class="text-[10px] font-black text-gray-500 uppercase">Upload index.html</p>
-                        </div>
-                        <button onclick="pushDeploy()" class="w-full btn-premium">PUBLISH</button>
-                    </div>
+            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-lg">SIGNOUT</button>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-5">
+                <div class="glass p-8">
+                    <h3 class="text-xs font-black text-gray-400 uppercase mb-6">Deploy New Site</h3>
+                    <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-premium">
+                    <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-64 font-mono text-[11px]"></textarea>
+                    <button onclick="pushDeploy()" class="btn-bki">PUBLISH WEBSITE 🚀</button>
                 </div>
-                <div class="lg:col-span-7"><div id="project-list" class="grid grid-cols-1 gap-6"></div></div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <h3 class="text-xs font-black text-gray-400 uppercase mb-6">All Deployed Projects</h3>
+                <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
-</div>
-
-<div id="render-engine" class="hidden"></div>
 
 <script>
     const fb = { databaseURL: "https://rmail-68719-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(fb);
     const db = firebase.database();
 
-    let htmlBuffer = "";
-    let currentOwner = localStorage.getItem('rloy_session_user') || "";
+    // Sesuai Request: 1 Akun Saja
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "2013GG";
 
-    function handleRouting() {
+    let isLogged = localStorage.getItem('rloy_admin_session') === 'true';
+
+    window.onload = () => {
         const hash = window.location.hash.substring(1);
-        const app = document.getElementById('main-app');
-        const engine = document.getElementById('render-engine');
+        if(hash) return serve(hash);
+        if(isLogged) showDashboard();
+    };
 
-        if (hash && !['console', 'gate'].includes(hash)) {
-            app.classList.add('hidden');
-            engine.classList.remove('hidden');
-            db.ref('sites/' + hash).on('value', s => {
-                if (s.exists()) {
-                    const d = s.val();
-                    if (d.status === "banned") {
-                        engine.innerHTML = `<div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-family:sans-serif;"><h1>WEBSITE DIBLOKIR</h1><p>Melanggar peraturan RLOY / PT BKI.</p></div>`;
-                    } else if (d.status === "off") {
-                        engine.innerHTML = `<div style="background:#000; color:#fff; height:100vh; width:100vw; display:flex; align-items:center; justify-content:center;"><h1>MAINTENANCE</h1></div>`;
-                    } else {
-                        document.open(); document.write(d.content); document.close();
-                    }
-                }
-            });
+    function checkAdmin() {
+        const u = document.getElementById('user-in').value;
+        const p = document.getElementById('pass-in').value;
+
+        if(u === ADMIN_USER && p === ADMIN_PASS) {
+            localStorage.setItem('rloy_admin_session', 'true');
+            showDashboard();
         } else {
-            app.classList.remove('hidden');
-            engine.classList.add('hidden');
-            if (!currentOwner) showPage('gate');
-            else {
-                document.getElementById('display-name').innerText = "USER: " + currentOwner.toUpperCase();
-                showPage('console');
-                loadProjects();
-            }
+            alert("Akses Ditolak! Username atau Password Salah.");
         }
     }
 
-    function showPage(id) {
-        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-        document.getElementById('p-' + id).classList.remove('hidden');
-    }
-
-    function handleAuth() {
-        const id = document.getElementById('user-id').value.trim().toLowerCase();
-        const pw = document.getElementById('user-pw').value.trim();
-        if (!id || !pw) return alert("Lengkapi data!");
-        db.ref('users_rloy/' + id).once('value', s => {
-            if (s.exists()) {
-                if (s.val().pw === pw) { loginSuccess(id); } else { alert("Password salah!"); }
-            } else {
-                if (confirm("Daftar user baru?")) {
-                    db.ref('users_rloy/' + id).set({ pw: pw, created: new Date().toLocaleString() }).then(() => loginSuccess(id));
-                }
-            }
-        });
-    }
-
-    function loginSuccess(id) { localStorage.setItem('rloy_session_user', id); currentOwner = id; handleRouting(); }
-    function logout() { localStorage.removeItem('rloy_session_user'); location.reload(); }
-
-    function readFile(input) {
-        const reader = new FileReader();
-        reader.onload = (e) => { htmlBuffer = e.target.result; document.getElementById('file-label').innerText = "READY"; };
-        reader.readAsText(input.files[0]);
+    function showDashboard() {
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('admin-page').classList.remove('hidden');
+        loadAllProjects();
     }
 
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if (!slug || !htmlBuffer) return alert("Error!");
-        db.ref('sites/' + slug).set({ content: htmlBuffer, owner: currentOwner, time: new Date().toLocaleString(), status: "on" })
-        .then(() => { alert("Live!"); loadProjects(); });
+        const code = document.getElementById('web-html').value;
+        if(!slug || !code) return alert("Lengkapi data!");
+
+        db.ref('sites/' + slug).set({
+            content: code,
+            owner: 'admin',
+            time: new Date().toLocaleString()
+        }).then(() => {
+            alert("Website " + slug + " berhasil live!");
+            document.getElementById('web-slug').value = "";
+            document.getElementById('web-html').value = "";
+        });
     }
 
-    function loadProjects() {
-        const list = document.getElementById('project-list');
-        db.ref('sites').orderByChild('owner').equalTo(currentOwner).on('value', s => {
+    function loadAllProjects() {
+        // Mengambil SEMUA proyek dari database tanpa filter
+        db.ref('sites').on('value', s => {
+            const list = document.getElementById('master-list');
             list.innerHTML = "";
+            if(!s.exists()) {
+                list.innerHTML = "<p class='text-gray-600 italic text-sm'>Belum ada proyek dideploy.</p>";
+                return;
+            }
             s.forEach(child => {
                 const d = child.val();
-                list.innerHTML += `<div class="glass-box !p-6 flex justify-between items-center">
-                    <div><h4 class="font-bold italic">/${child.key}</h4></div>
-                    <div class="flex items-center gap-4">
-                        <label class="switch"><input type="checkbox" ${d.status === 'on' ? 'checked' : ''} onchange="toggleStatus('${child.key}','${d.status}')"><span class="slider"></span></label>
-                        <a href="#${child.key}" class="text-[9px] font-bold border border-white/10 px-3 py-2 rounded">OPEN</a>
-                    </div>
-                </div>`;
+                list.innerHTML += `
+                    <div class="glass p-5 flex justify-between items-center border-white/5">
+                        <div>
+                            <h4 class="text-xl font-bold italic">/${child.key}</h4>
+                            <p class="text-[9px] text-gray-600 uppercase">Created: ${d.time}</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#${child.key}" target="_blank" class="text-[10px] font-bold text-blue-500 tracking-widest">VIEW</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-bold text-red-500 tracking-widest">DELETE</button>
+                        </div>
+                    </div>`;
             });
         });
     }
 
-    function toggleStatus(slug, current) {
-        if(current === 'banned') return alert("Diblokir Admin!");
-        db.ref('sites/' + slug).child('status').set(current === 'on' ? 'off' : 'on');
-    }
+    function delSite(k) { if(confirm("Hapus proyek ini secara permanen?")) db.ref('sites/'+k).remove(); }
+    function logout() { localStorage.clear(); location.reload(); }
 
-    window.onload = handleRouting;
-    window.onhashchange = handleRouting;
+    function serve(h) {
+        db.ref('sites/'+h).once('value', s => {
+            if(s.exists()) {
+                document.open(); document.write(s.val().content); document.close();
+            } else location.href = "/";
+        });
+    }
 </script>
 </body>
 </html>
