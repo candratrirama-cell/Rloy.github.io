@@ -11,7 +11,7 @@
     <style>
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
-        .input-premium { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 16px; border-radius: 12px; width: 100%; color: #fff; margin-bottom: 12px; outline: none; }
+        .input-premium { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 16px; border-radius: 12px; width: 100%; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
         .input-premium:focus { border-color: #fe2c55; }
         .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; }
         .btn-bki:hover { background: #fe2c55; color: #fff; }
@@ -35,37 +35,38 @@
         <div class="flex justify-between items-end mb-12">
             <div>
                 <h2 class="text-4xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
-                <p class="text-gray-500">Status: <span class="text-green-500 font-bold uppercase text-xs">Full Access Granted</span></p>
+                <p class="text-gray-500 text-xs">Akses: <span class="text-white font-bold uppercase">Administrator</span></p>
             </div>
-            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-lg">SIGNOUT</button>
+            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">SIGNOUT</button>
         </div>
 
         <div class="grid lg:grid-cols-12 gap-10">
             <div class="lg:col-span-5">
                 <div class="glass p-8">
-                    <h3 class="text-xs font-black text-gray-400 uppercase mb-6">Deploy New Site</h3>
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Deploy Project Baru</h3>
                     <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-premium">
                     <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-64 font-mono text-[11px]"></textarea>
-                    <button onclick="pushDeploy()" class="btn-bki">PUBLISH WEBSITE 🚀</button>
+                    <button onclick="pushDeploy()" id="btn-publish" class="btn-bki">PUBLISH WEBSITE 🚀</button>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <h3 class="text-xs font-black text-gray-400 uppercase mb-6">All Deployed Projects</h3>
+                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Database Deployment</h3>
                 <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
 <script>
-    const fb = { databaseURL: "https://rmail-68719-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    // DATABASE TERBARU PT BKI
+    const fb = { databaseURL: "https://deploy-3ff5a-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(fb);
     const db = firebase.database();
 
-    // Sesuai Request: 1 Akun Saja
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "2013GG";
 
+    // Auto Login Check
     let isLogged = localStorage.getItem('rloy_admin_session') === 'true';
 
     window.onload = () => {
@@ -82,7 +83,7 @@
             localStorage.setItem('rloy_admin_session', 'true');
             showDashboard();
         } else {
-            alert("Akses Ditolak! Username atau Password Salah.");
+            alert("Username atau Password Salah!");
         }
     }
 
@@ -95,39 +96,50 @@
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
         const code = document.getElementById('web-html').value;
-        if(!slug || !code) return alert("Lengkapi data!");
+        const btn = document.getElementById('btn-publish');
+
+        if(!slug || !code) return alert("Slug dan Kode HTML tidak boleh kosong!");
+
+        btn.innerText = "PUBLISHING...";
+        btn.disabled = true;
 
         db.ref('sites/' + slug).set({
             content: code,
             owner: 'admin',
             time: new Date().toLocaleString()
         }).then(() => {
-            alert("Website " + slug + " berhasil live!");
+            alert("Website Berhasil Diterbitkan!");
             document.getElementById('web-slug').value = "";
             document.getElementById('web-html').value = "";
+            btn.innerText = "PUBLISH WEBSITE 🚀";
+            btn.disabled = false;
+        }).catch(err => {
+            alert("Gagal Publish! Cek Rules Firebase Anda.");
+            console.error(err);
+            btn.innerText = "PUBLISH WEBSITE 🚀";
+            btn.disabled = false;
         });
     }
 
     function loadAllProjects() {
-        // Mengambil SEMUA proyek dari database tanpa filter
         db.ref('sites').on('value', s => {
             const list = document.getElementById('master-list');
             list.innerHTML = "";
             if(!s.exists()) {
-                list.innerHTML = "<p class='text-gray-600 italic text-sm'>Belum ada proyek dideploy.</p>";
+                list.innerHTML = "<p class='text-gray-600 italic text-sm'>Database kosong.</p>";
                 return;
             }
             s.forEach(child => {
                 const d = child.val();
                 list.innerHTML += `
-                    <div class="glass p-5 flex justify-between items-center border-white/5">
+                    <div class="glass p-5 flex justify-between items-center hover:border-red-500/30 transition">
                         <div>
-                            <h4 class="text-xl font-bold italic">/${child.key}</h4>
-                            <p class="text-[9px] text-gray-600 uppercase">Created: ${d.time}</p>
+                            <h4 class="text-xl font-bold italic tracking-tighter">/${child.key}</h4>
+                            <p class="text-[9px] text-gray-600 uppercase font-bold">${d.time}</p>
                         </div>
                         <div class="flex gap-4">
-                            <a href="#${child.key}" target="_blank" class="text-[10px] font-bold text-blue-500 tracking-widest">VIEW</a>
-                            <button onclick="delSite('${child.key}')" class="text-[10px] font-bold text-red-500 tracking-widest">DELETE</button>
+                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 tracking-widest hover:underline">VIEW</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-500 tracking-widest hover:text-red-400">DELETE</button>
                         </div>
                     </div>`;
             });
@@ -141,7 +153,10 @@
         db.ref('sites/'+h).once('value', s => {
             if(s.exists()) {
                 document.open(); document.write(s.val().content); document.close();
-            } else location.href = "/";
+            } else {
+                window.location.hash = "";
+                location.reload();
+            }
         });
     }
 </script>
