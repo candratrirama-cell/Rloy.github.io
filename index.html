@@ -13,60 +13,72 @@
         .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
         .input-premium { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 16px; border-radius: 12px; width: 100%; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
         .input-premium:focus { border-color: #fe2c55; }
-        .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; }
-        .btn-bki:hover { background: #fe2c55; color: #fff; }
+        .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-bki:hover { background: #fe2c55; color: #fff; transform: translateY(-2px); }
         .hidden { display: none !important; }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
     </style>
 </head>
 <body class="p-6">
 
     <section id="login-page" class="min-h-screen flex items-center justify-center">
-        <div class="w-full max-w-sm glass p-10 text-center">
-            <h1 class="text-4xl font-black italic mb-2">RLOY.</h1>
-            <p class="text-gray-500 text-[10px] uppercase tracking-widest mb-10">PT Bangga Karya Indonesia</p>
+        <div class="w-full max-w-sm glass p-10 text-center shadow-2xl">
+            <h1 class="text-4xl font-black italic mb-2 tracking-tighter">RLOY.</h1>
+            <p class="text-gray-500 text-[10px] uppercase tracking-[0.3em] mb-10">PT Bangga Karya Indonesia</p>
             
             <input type="text" id="user-in" placeholder="Username" class="input-premium">
             <input type="password" id="pass-in" placeholder="Password" class="input-premium">
-            <button onclick="checkAdmin()" class="btn-bki">MASUK KE DASHBOARD</button>
+            <button onclick="checkAdmin()" class="btn-bki">LOGIN ADMIN</button>
         </div>
     </section>
 
     <section id="admin-page" class="hidden max-w-6xl mx-auto pt-20 pb-20">
-        <div class="flex justify-between items-end mb-12">
+        <div class="flex justify-between items-end mb-12 border-b border-white/5 pb-8">
             <div>
-                <h2 class="text-4xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
-                <p class="text-gray-500 text-xs">Akses: <span class="text-white font-bold uppercase">Administrator</span></p>
+                <h2 class="text-5xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
+                <p class="text-gray-400 text-xs mt-2 uppercase tracking-widest">Project: <span class="text-white">miningtransaction</span></p>
             </div>
-            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">SIGNOUT</button>
+            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-6 py-3 rounded-xl border border-red-500/20 hover:bg-red-600 hover:text-white transition">SIGNOUT</button>
         </div>
 
         <div class="grid lg:grid-cols-12 gap-10">
             <div class="lg:col-span-5">
-                <div class="glass p-8">
-                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Deploy Project Baru</h3>
+                <div class="glass p-8 sticky top-10">
+                    <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Deploy New Infrastructure</h3>
                     <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-premium">
-                    <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-64 font-mono text-[11px]"></textarea>
+                    <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-80 font-mono text-[11px]"></textarea>
                     <button onclick="pushDeploy()" id="btn-publish" class="btn-bki">PUBLISH WEBSITE 🚀</button>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Database Deployment</h3>
+                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Live Deployment List</h3>
                 <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
 <script>
-    // DATABASE TERBARU PT BKI
-    const fb = { databaseURL: "https://deploy-3ff5a-default-rtdb.asia-southeast1.firebasedatabase.app" };
-    firebase.initializeApp(fb);
+    // CONFIG BARU PT BKI (MININGTRANSACTION)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCtkndqaHPx7PfbjJ2xbd3mda_cz3NwIpE",
+        authDomain: "miningtransaction.firebaseapp.com",
+        projectId: "miningtransaction",
+        databaseURL: "https://miningtransaction-default-rtdb.firebaseio.com", // Ditambahkan otomatis agar konek Realtime DB
+        storageBucket: "miningtransaction.firebasestorage.app",
+        messagingSenderId: "839897955886",
+        appId: "1:839897955886:web:78cdd18c9624496dda69bf"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "2013GG";
 
-    // Auto Login Check
+    // Auto Login Check sesuai instruksi [2026-01-23]
     let isLogged = localStorage.getItem('rloy_admin_session') === 'true';
 
     window.onload = () => {
@@ -83,7 +95,7 @@
             localStorage.setItem('rloy_admin_session', 'true');
             showDashboard();
         } else {
-            alert("Username atau Password Salah!");
+            alert("Akses Ditolak! Kredensial Salah.");
         }
     }
 
@@ -98,9 +110,9 @@
         const code = document.getElementById('web-html').value;
         const btn = document.getElementById('btn-publish');
 
-        if(!slug || !code) return alert("Slug dan Kode HTML tidak boleh kosong!");
+        if(!slug || !code) return alert("Slug dan Kode HTML wajib diisi!");
 
-        btn.innerText = "PUBLISHING...";
+        btn.innerText = "UPLOADING...";
         btn.disabled = true;
 
         db.ref('sites/' + slug).set({
@@ -108,13 +120,13 @@
             owner: 'admin',
             time: new Date().toLocaleString()
         }).then(() => {
-            alert("Website Berhasil Diterbitkan!");
+            alert("Website " + slug + " berhasil dipublikasikan!");
             document.getElementById('web-slug').value = "";
             document.getElementById('web-html').value = "";
             btn.innerText = "PUBLISH WEBSITE 🚀";
             btn.disabled = false;
         }).catch(err => {
-            alert("Gagal Publish! Cek Rules Firebase Anda.");
+            alert("Error: Pastikan Realtime Database Rules sudah diset ke Public (true).");
             console.error(err);
             btn.innerText = "PUBLISH WEBSITE 🚀";
             btn.disabled = false;
@@ -126,33 +138,39 @@
             const list = document.getElementById('master-list');
             list.innerHTML = "";
             if(!s.exists()) {
-                list.innerHTML = "<p class='text-gray-600 italic text-sm'>Database kosong.</p>";
+                list.innerHTML = "<div class='glass p-10 text-center text-gray-600 italic'>Database Kosong.</div>";
                 return;
             }
             s.forEach(child => {
                 const d = child.val();
                 list.innerHTML += `
-                    <div class="glass p-5 flex justify-between items-center hover:border-red-500/30 transition">
+                    <div class="glass p-6 flex justify-between items-center hover:bg-white/5 transition group">
                         <div>
-                            <h4 class="text-xl font-bold italic tracking-tighter">/${child.key}</h4>
-                            <p class="text-[9px] text-gray-600 uppercase font-bold">${d.time}</p>
+                            <h4 class="text-2xl font-black italic tracking-tighter group-hover:text-red-500 transition">/${child.key}</h4>
+                            <p class="text-[9px] text-gray-600 uppercase font-bold mt-1">Deployed: ${d.time}</p>
                         </div>
                         <div class="flex gap-4">
-                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 tracking-widest hover:underline">VIEW</a>
-                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-500 tracking-widest hover:text-red-400">DELETE</button>
+                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 border border-blue-500/20 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">VIEW</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-800 border border-red-800/20 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">DELETE</button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function delSite(k) { if(confirm("Hapus proyek ini secara permanen?")) db.ref('sites/'+k).remove(); }
-    function logout() { localStorage.clear(); location.reload(); }
+    function delSite(k) { if(confirm("Hapus data ini selamanya?")) db.ref('sites/'+k).remove(); }
+    
+    function logout() { 
+        localStorage.removeItem('rloy_admin_session'); 
+        location.reload(); 
+    }
 
     function serve(h) {
         db.ref('sites/'+h).once('value', s => {
             if(s.exists()) {
-                document.open(); document.write(s.val().content); document.close();
+                document.open(); 
+                document.write(s.val().content); 
+                document.close();
             } else {
                 window.location.hash = "";
                 location.reload();
