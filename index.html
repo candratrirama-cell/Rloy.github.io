@@ -10,55 +10,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
-        .input-premium { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 16px; border-radius: 12px; width: 100%; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
-        .input-premium:focus { border-color: #fe2c55; }
-        .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; border: none; }
+        .glass { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; backdrop-filter: blur(10px); }
+        .input-bki { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 18px; border-radius: 14px; width: 100%; color: #fff; outline: none; transition: 0.3s; margin-bottom: 12px; }
+        .input-bki:focus { border-color: #fe2c55; box-shadow: 0 0 20px rgba(254, 44, 85, 0.1); }
+        .btn-bki { background: #fff; color: #000; padding: 18px; border-radius: 14px; font-weight: 800; width: 100%; cursor: pointer; border: none; transition: 0.3s; }
         .btn-bki:hover { background: #fe2c55; color: #fff; transform: translateY(-2px); }
         .hidden { display: none !important; }
-        .stat-badge { background: rgba(254, 44, 85, 0.1); color: #fe2c55; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; border: 1px solid rgba(254, 44, 85, 0.2); }
+        .visitor-badge { background: #fe2c55; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-6 md:p-12">
 
     <section id="login-page" class="min-h-screen flex items-center justify-center">
-        <div class="w-full max-w-sm glass p-10 text-center shadow-2xl">
-            <h1 class="text-4xl font-black italic mb-2 tracking-tighter">RLOY.</h1>
-            <p class="text-gray-500 text-[10px] uppercase tracking-[0.3em] mb-10">PT Bangga Karya Indonesia</p>
-            <input type="text" id="user-in" placeholder="Username" class="input-premium">
-            <input type="password" id="pass-in" placeholder="Password" class="input-premium">
-            <button onclick="checkAdmin()" class="btn-bki">LOGIN ADMIN</button>
+        <div class="w-full max-w-sm glass p-10 text-center shadow-2xl border border-white/10">
+            <h1 class="text-5xl font-black italic mb-2 tracking-tighter">RLOY.</h1>
+            <p class="text-gray-500 text-[10px] uppercase tracking-[0.4em] mb-12">PT Bangga Karya Indonesia</p>
+            
+            <input type="text" id="u-in" placeholder="Username" class="input-bki text-center">
+            <input type="password" id="p-in" placeholder="Password" class="input-bki text-center">
+            <button onclick="checkAuth()" class="btn-bki shadow-lg shadow-white/5">DASHBOARD ACCESS</button>
         </div>
     </section>
 
-    <section id="admin-page" class="hidden max-w-6xl mx-auto pt-20 pb-20">
-        <div class="flex justify-between items-end mb-12 border-b border-white/5 pb-8">
+    <section id="admin-page" class="hidden max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div>
-                <h2 class="text-5xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
-                <p class="text-gray-400 text-xs mt-2 uppercase tracking-widest">Analytics & Deployment Dashboard</p>
+                <h2 class="text-6xl font-black italic tracking-tighter text-white">MASTER<span class="text-red-600">.</span></h2>
+                <p class="text-gray-500 text-xs mt-2 uppercase tracking-[0.3em]">Infrastructure Control Panel</p>
             </div>
-            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-6 py-3 rounded-xl border border-red-500/20 hover:bg-red-600 transition">SIGNOUT</button>
-        </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Logged in as</p>
+                    <p class="font-black italic">Administrator</p>
+                </div>
+                <button onclick="logout()" class="bg-red-600/10 text-red-600 px-6 py-3 rounded-2xl font-black text-xs border border-red-600/20 hover:bg-red-600 hover:text-white transition">SIGNOUT</button>
+            </div>
+        </header>
 
-        <div class="grid lg:grid-cols-12 gap-10">
+        <div class="grid lg:grid-cols-12 gap-12">
             <div class="lg:col-span-5">
-                <div class="glass p-8 sticky top-10">
-                    <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">New Infrastructure</h3>
-                    <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-premium">
-                    <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-80 font-mono text-[11px]"></textarea>
-                    <button onclick="pushDeploy()" id="btn-publish" class="btn-bki">PUBLISH WEBSITE </button>
+                <div class="glass p-8 sticky top-10 border border-white/5 shadow-2xl">
+                    <h3 class="text-[10px] font-black text-red-600 uppercase tracking-widest mb-8 italic">// New Deployment</h3>
+                    <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-bki">
+                    <textarea id="web-html" placeholder="Paste HTML Source Code Here..." class="input-bki h-80 font-mono text-[11px] leading-relaxed"></textarea>
+                    <button onclick="publish()" id="btn-pub" class="btn-bki">PUBLISH TO CLOUD ⚡</button>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Active Deployments & Statistics</h3>
+                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-8 italic">// Database Analytics</h3>
                 <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
 <script>
-    const firebaseConfig = {
+    // CONFIG MININGTRANSACTION
+    const config = {
         apiKey: "AIzaSyCtkndqaHPx7PfbjJ2xbd3mda_cz3NwIpE",
         authDomain: "miningtransaction.firebaseapp.com",
         projectId: "miningtransaction",
@@ -68,88 +76,87 @@
         appId: "1:839897955886:web:78cdd18c9624496dda69bf"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(config);
     const db = firebase.database();
 
-    const ADMIN_USER = "admin";
-    const ADMIN_PASS = "2013GG";
+    const ADM = "admin", PAS = "2013GG";
 
-    let isLogged = localStorage.getItem('rloy_admin_session') === 'true';
-
+    // Proteksi Session [2026-01-23]
     window.onload = () => {
-        const hash = window.location.hash.substring(1);
-        if(hash) return serve(hash);
-        if(isLogged) showDashboard();
+        const h = window.location.hash.substring(1);
+        if(h) return serve(h);
+        if(localStorage.getItem('rloy_session') === 'active') showDash();
     };
 
-    function checkAdmin() {
-        if(document.getElementById('user-in').value === ADMIN_USER && document.getElementById('pass-in').value === ADMIN_PASS) {
-            localStorage.setItem('rloy_admin_session', 'true');
-            showDashboard();
-        } else { alert("Akses Ditolak!"); }
+    function checkAuth() {
+        if(document.getElementById('u-in').value === ADM && document.getElementById('p-in').value === PAS) {
+            localStorage.setItem('rloy_session', 'active');
+            showDash();
+        } else { alert("Akses Ditolak, Bos!"); }
     }
 
-    function showDashboard() {
+    function showDash() {
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('admin-page').classList.remove('hidden');
-        loadAllProjects();
+        loadData();
     }
 
-    function pushDeploy() {
-        const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
-        const code = document.getElementById('web-html').value;
-        if(!slug || !code) return alert("Wajib diisi!");
+    function publish() {
+        const s = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
+        const c = document.getElementById('web-html').value;
+        const b = document.getElementById('btn-pub');
 
-        db.ref('sites/' + slug).set({
-            content: code,
-            owner: 'admin',
-            views: 0, // Inisialisasi pengunjung 0
+        if(!s || !c) return alert("Slug & HTML kosong!");
+
+        b.innerText = "DEPLOYING..."; b.disabled = true;
+
+        db.ref('sites/' + s).set({
+            content: c,
+            views: 0,
             time: new Date().toLocaleString()
         }).then(() => {
             alert("Berhasil!");
             document.getElementById('web-slug').value = "";
             document.getElementById('web-html').value = "";
+            b.innerText = "PUBLISH TO CLOUD ⚡"; b.disabled = false;
         });
     }
 
-    function loadAllProjects() {
-        db.ref('sites').on('value', s => {
+    function loadData() {
+        db.ref('sites').on('value', snap => {
             const list = document.getElementById('master-list');
             list.innerHTML = "";
-            if(!s.exists()) return list.innerHTML = "<div class='glass p-10 text-center text-gray-600'>Kosong</div>";
-            
-            s.forEach(child => {
-                const d = child.val();
+            if(!snap.exists()) return list.innerHTML = "<p class='text-gray-600 p-10 glass text-center'>No active projects.</p>";
+
+            snap.forEach(item => {
+                const d = item.val();
                 list.innerHTML += `
-                    <div class="glass p-6 flex justify-between items-center group transition">
+                    <div class="glass p-6 flex justify-between items-center group hover:bg-white/5 transition border border-white/5 hover:border-red-600/30">
                         <div>
-                            <div class="flex items-center gap-3 mb-1">
-                                <h4 class="text-2xl font-black italic tracking-tighter">/${child.key}</h4>
-                                <span class="stat-badge"> ${d.views || 0} Visitors</span>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h4 class="text-2xl font-black italic tracking-tighter text-white">/${item.key}</h4>
+                                <span class="visitor-badge">📈 ${d.views || 0}</span>
                             </div>
-                            <p class="text-[9px] text-gray-600 uppercase font-bold">Deployed: ${d.time}</p>
+                            <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">${d.time}</p>
                         </div>
-                        <div class="flex gap-2">
-                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 border border-blue-500/10 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">VIEW</a>
-                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-800 border border-red-800/10 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">DEL</button>
+                        <div class="flex gap-3">
+                            <a href="#${item.key}" target="_blank" class="text-[10px] font-black text-blue-400 border border-blue-400/10 px-5 py-2 rounded-xl hover:bg-blue-500 hover:text-white transition">VIEW</a>
+                            <button onclick="del('${item.key}')" class="text-[10px] font-black text-red-900 px-5 py-2 rounded-xl hover:text-red-500 transition underline underline-offset-4">DEL</button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
-    function logout() { localStorage.removeItem('rloy_admin_session'); location.reload(); }
+    function del(k) { if(confirm("Hapus Proyek?")) db.ref('sites/'+k).remove(); }
+    function logout() { localStorage.clear(); location.reload(); }
 
     function serve(h) {
         db.ref('sites/'+h).once('value', s => {
             if(s.exists()) {
-                // LOGIKA COUNTER: Tambah visitor setiap kali dibuka
-                db.ref('sites/'+h+'/views').transaction((current) => (current || 0) + 1);
-                
-                document.open(); 
-                document.write(s.val().content); 
-                document.close();
+                // Update Visitor Counter
+                db.ref('sites/'+h+'/views').transaction(v => (v || 0) + 1);
+                document.open(); document.write(s.val().content); document.close();
             } else { location.hash = ""; location.reload(); }
         });
     }
