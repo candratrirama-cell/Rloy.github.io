@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RLOY MASTER | PT Bangga Karya Indonesia</title>
+    <title>RLOY DEPLOYER</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +17,6 @@
         .btn-bki:hover { background: #facc15; color: #000; transform: translateY(-2px); }
         .hidden { display: none !important; }
         .visitor-label { background: #facc15; color: #000; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 900; }
-        #db-status { font-size: 10px; padding: 4px 10px; border-radius: 20px; }
     </style>
 </head>
 <body class="p-6 md:p-12">
@@ -28,62 +27,61 @@
             <p class="text-gray-500 text-[10px] uppercase tracking-[0.4em] mb-12">PT Bangga Karya Indonesia</p>
             <input type="text" id="u-in" placeholder="Username Admin" class="input-bki text-center">
             <input type="password" id="p-in" placeholder="Password" class="input-bki text-center">
-            <button onclick="checkAuth()" class="btn-bki uppercase tracking-widest text-xs">Akses Database</button>
+            <button onclick="checkAuth()" class="btn-bki uppercase tracking-widest text-xs">MASUK KONSOL</button>
         </div>
     </section>
 
     <section id="admin-page" class="hidden max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <div>
-                <h2 class="text-6xl font-black italic tracking-tighter">CONSOLE<span class="text-yellow-400">.</span></h2>
-                <div class="flex items-center gap-2 mt-2">
-                    <span id="db-status" class="bg-gray-800 text-gray-400 italic font-bold tracking-widest">CHECKING DATABASE...</span>
+                <h2 class="text-6xl font-black italic tracking-tighter uppercase">Console<span class="text-yellow-400">.</span></h2>
+                <div id="db-status-box" class="mt-2 text-[10px] font-bold tracking-widest px-3 py-1 rounded-full bg-red-600/10 text-red-500 w-fit italic">
+                    STATUS: CHECKING...
                 </div>
             </div>
-            <button onclick="logout()" class="bg-red-600/10 text-red-500 px-6 py-3 rounded-2xl font-black text-xs border border-red-500/20 hover:bg-red-600 hover:text-white transition">SIGNOUT</button>
+            <button onclick="logout()" class="bg-red-600/10 text-red-500 px-6 py-3 rounded-2xl font-black text-xs border border-red-500/20 hover:bg-red-600 hover:text-white transition">KELUAR</button>
         </header>
 
         <div class="grid lg:grid-cols-12 gap-12">
             <div class="lg:col-span-5">
                 <div class="glass p-8 sticky top-10 border border-white/5 shadow-2xl">
-                    <h3 class="text-[11px] font-black text-yellow-400 uppercase tracking-widest mb-8">// Deploy Project Baru</h3>
+                    <h3 class="text-[11px] font-black text-yellow-400 uppercase tracking-widest mb-8">// Deployment Baru</h3>
                     <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-bki">
                     <textarea id="web-html" placeholder="Masukkan Kode HTML di sini..." class="input-bki h-80 font-mono text-[11px]"></textarea>
-                    <button onclick="publish()" id="btn-pub" class="btn-bki">PUBLIKASIKAN WEBSITE 🚀</button>
+                    <button onclick="publish()" id="btn-pub" class="btn-bki">PUBLISH SEKARANG 🚀</button>
                 </div>
             </div>
             <div class="lg:col-span-7">
-                <h3 class="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-8">// Monitoring & Analytics</h3>
+                <h3 class="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-8">// Live Analytics</h3>
                 <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
 <script>
-    // PERBAIKAN: Pastikan DatabaseURL Benar & Terdeteksi
+    // FIX: URL Singapore Server (asia-southeast1)
     const firebaseConfig = {
         apiKey: "AIzaSyCtkndqaHPx7PfbjJ2xbd3mda_cz3NwIpE",
         authDomain: "miningtransaction.firebaseapp.com",
         projectId: "miningtransaction",
-        databaseURL: "https://miningtransaction-default-rtdb.firebaseio.com",
+        databaseURL: "https://miningtransaction-default-rtdb.asia-southeast1.firebasedatabase.app",
         storageBucket: "miningtransaction.firebasestorage.app",
         messagingSenderId: "839897955886",
         appId: "1:839897955886:web:78cdd18c9624496dda69bf"
     };
 
-    // Inisialisasi
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Cek Koneksi Database Realtime
-    const statusEl = document.getElementById('db-status');
+    // Koneksi Indikator
     db.ref(".info/connected").on("value", (snap) => {
+        const statusBox = document.getElementById('db-status-box');
         if (snap.val() === true) {
-            statusEl.innerText = "CONNECTED";
-            statusEl.className = "bg-green-600/20 text-green-500 italic font-bold tracking-widest px-3 py-1 rounded-full";
+            statusBox.innerText = "STATUS: CONNECTED (SG)";
+            statusBox.className = "mt-2 text-[10px] font-bold tracking-widest px-3 py-1 rounded-full bg-green-600/20 text-green-500 w-fit italic border border-green-500/20";
         } else {
-            statusEl.innerText = "DISCONNECTED";
-            statusEl.className = "bg-red-600/20 text-red-500 italic font-bold tracking-widest px-3 py-1 rounded-full";
+            statusBox.innerText = "STATUS: DISCONNECTED";
+            statusBox.className = "mt-2 text-[10px] font-bold tracking-widest px-3 py-1 rounded-full bg-red-600/20 text-red-500 w-fit italic border border-red-500/20";
         }
     });
 
@@ -113,24 +111,21 @@
         const c = document.getElementById('web-html').value;
         const b = document.getElementById('btn-pub');
 
-        if(!s || !c) return alert("Isi data dulu!");
-        b.innerText = "SEDANG DEPLOY..."; b.disabled = true;
+        if(!s || !c) return alert("Wajib isi slug dan HTML!");
+        b.innerText = "PROSES DEPLOY..."; b.disabled = true;
 
-        // Menggunakan update() agar lebih aman daripada set() jika database sibuk
-        db.ref('sites/' + s).update({
+        db.ref('sites/' + s).set({
             content: c,
             views: 0,
             time: new Date().toLocaleString()
-        }, (error) => {
-            if (error) {
-                alert("Gagal deploy! Cek Rules Firebase Anda.");
-                b.innerText = "PUBLIKASIKAN WEBSITE 🚀"; b.disabled = false;
-            } else {
-                alert("Website " + s + " Aktif!");
-                document.getElementById('web-slug').value = "";
-                document.getElementById('web-html').value = "";
-                b.innerText = "PUBLIKASIKAN WEBSITE 🚀"; b.disabled = false;
-            }
+        }).then(() => {
+            alert("Berhasil Publish!");
+            document.getElementById('web-slug').value = "";
+            document.getElementById('web-html').value = "";
+            b.innerText = "PUBLISH SEKARANG 🚀"; b.disabled = false;
+        }).catch(e => {
+            alert("Gagal! Cek Rules di Firebase Console.");
+            b.innerText = "PUBLISH SEKARANG 🚀"; b.disabled = false;
         });
     }
 
@@ -138,29 +133,29 @@
         db.ref('sites').on('value', snap => {
             const list = document.getElementById('master-list');
             list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "<div class='glass p-10 text-center text-gray-600'>Belum ada proyek.</div>";
+            if(!snap.exists()) return list.innerHTML = "<div class='glass p-10 text-center text-gray-600'>Database Kosong.</div>";
 
             snap.forEach(item => {
                 const d = item.val();
                 list.innerHTML += `
-                    <div class="glass p-6 flex justify-between items-center border border-white/5">
+                    <div class="glass p-6 flex justify-between items-center border border-white/5 hover:border-yellow-400/30 transition">
                         <div>
                             <div class="flex items-center gap-3 mb-2">
-                                <h4 class="text-2xl font-black italic text-white">/${item.key}</h4>
+                                <h4 class="text-2xl font-black italic">/${item.key}</h4>
                                 <span class="visitor-label">${d.views || 0} PENGUNJUNG</span>
                             </div>
-                            <p class="text-[9px] text-gray-500 font-bold uppercase">${d.time}</p>
+                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Live since: ${d.time}</p>
                         </div>
                         <div class="flex gap-3">
-                            <a href="#${item.key}" target="_blank" class="text-[10px] font-black bg-blue-600 text-white px-4 py-2 rounded-lg">VIEW</a>
-                            <button onclick="del('${item.key}')" class="text-red-500 text-[10px] font-black uppercase">Hapus</button>
+                            <a href="#${item.key}" target="_blank" class="text-[10px] font-black bg-blue-600 text-white px-5 py-2 rounded-xl">LIHAT</a>
+                            <button onclick="del('${item.key}')" class="text-[10px] font-black text-red-500 uppercase">Hapus</button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function del(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
+    function del(k) { if(confirm("Hapus proyek ini?")) db.ref('sites/'+k).remove(); }
     function logout() { localStorage.clear(); location.reload(); }
 
     function serve(h) {
