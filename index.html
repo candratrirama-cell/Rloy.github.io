@@ -16,9 +16,7 @@
         .btn-bki { background: #fff; color: #000; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; transition: 0.3s; cursor: pointer; border: none; }
         .btn-bki:hover { background: #fe2c55; color: #fff; transform: translateY(-2px); }
         .hidden { display: none !important; }
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        .stat-badge { background: rgba(254, 44, 85, 0.1); color: #fe2c55; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; border: 1px solid rgba(254, 44, 85, 0.2); }
     </style>
 </head>
 <body class="p-6">
@@ -27,7 +25,6 @@
         <div class="w-full max-w-sm glass p-10 text-center shadow-2xl">
             <h1 class="text-4xl font-black italic mb-2 tracking-tighter">RLOY.</h1>
             <p class="text-gray-500 text-[10px] uppercase tracking-[0.3em] mb-10">PT Bangga Karya Indonesia</p>
-            
             <input type="text" id="user-in" placeholder="Username" class="input-premium">
             <input type="password" id="pass-in" placeholder="Password" class="input-premium">
             <button onclick="checkAdmin()" class="btn-bki">LOGIN ADMIN</button>
@@ -38,35 +35,34 @@
         <div class="flex justify-between items-end mb-12 border-b border-white/5 pb-8">
             <div>
                 <h2 class="text-5xl font-black italic tracking-tighter text-red-600">MASTER CONSOLE</h2>
-                <p class="text-gray-400 text-xs mt-2 uppercase tracking-widest">Project: <span class="text-white">miningtransaction</span></p>
+                <p class="text-gray-400 text-xs mt-2 uppercase tracking-widest">Analytics & Deployment Dashboard</p>
             </div>
-            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-6 py-3 rounded-xl border border-red-500/20 hover:bg-red-600 hover:text-white transition">SIGNOUT</button>
+            <button onclick="logout()" class="text-xs font-bold text-red-500 bg-red-500/10 px-6 py-3 rounded-xl border border-red-500/20 hover:bg-red-600 transition">SIGNOUT</button>
         </div>
 
         <div class="grid lg:grid-cols-12 gap-10">
             <div class="lg:col-span-5">
                 <div class="glass p-8 sticky top-10">
-                    <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Deploy New Infrastructure</h3>
+                    <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">New Infrastructure</h3>
                     <input type="text" id="web-slug" placeholder="slug-nama-web" class="input-premium">
                     <textarea id="web-html" placeholder="<html> ... </html>" class="input-premium h-80 font-mono text-[11px]"></textarea>
-                    <button onclick="pushDeploy()" id="btn-publish" class="btn-bki">PUBLISH WEBSITE 🚀</button>
+                    <button onclick="pushDeploy()" id="btn-publish" class="btn-bki">PUBLISH WEBSITE </button>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Live Deployment List</h3>
+                <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Active Deployments & Statistics</h3>
                 <div id="master-list" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
 <script>
-    // CONFIG BARU PT BKI (MININGTRANSACTION)
     const firebaseConfig = {
         apiKey: "AIzaSyCtkndqaHPx7PfbjJ2xbd3mda_cz3NwIpE",
         authDomain: "miningtransaction.firebaseapp.com",
         projectId: "miningtransaction",
-        databaseURL: "https://miningtransaction-default-rtdb.asia-southeast1.firebasedatabase.app/", // Ditambahkan otomatis agar konek Realtime DB
+        databaseURL: "https://miningtransaction-default-rtdb.firebaseio.com",
         storageBucket: "miningtransaction.firebasestorage.app",
         messagingSenderId: "839897955886",
         appId: "1:839897955886:web:78cdd18c9624496dda69bf"
@@ -78,7 +74,6 @@
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "2013GG";
 
-    // Auto Login Check sesuai instruksi [2026-01-23]
     let isLogged = localStorage.getItem('rloy_admin_session') === 'true';
 
     window.onload = () => {
@@ -88,15 +83,10 @@
     };
 
     function checkAdmin() {
-        const u = document.getElementById('user-in').value;
-        const p = document.getElementById('pass-in').value;
-
-        if(u === ADMIN_USER && p === ADMIN_PASS) {
+        if(document.getElementById('user-in').value === ADMIN_USER && document.getElementById('pass-in').value === ADMIN_PASS) {
             localStorage.setItem('rloy_admin_session', 'true');
             showDashboard();
-        } else {
-            alert("Akses Ditolak! Kredensial Salah.");
-        }
+        } else { alert("Akses Ditolak!"); }
     }
 
     function showDashboard() {
@@ -108,28 +98,17 @@
     function pushDeploy() {
         const slug = document.getElementById('web-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
         const code = document.getElementById('web-html').value;
-        const btn = document.getElementById('btn-publish');
-
-        if(!slug || !code) return alert("Slug dan Kode HTML wajib diisi!");
-
-        btn.innerText = "UPLOADING...";
-        btn.disabled = true;
+        if(!slug || !code) return alert("Wajib diisi!");
 
         db.ref('sites/' + slug).set({
             content: code,
             owner: 'admin',
+            views: 0, // Inisialisasi pengunjung 0
             time: new Date().toLocaleString()
         }).then(() => {
-            alert("Website " + slug + " berhasil dipublikasikan!");
+            alert("Berhasil!");
             document.getElementById('web-slug').value = "";
             document.getElementById('web-html').value = "";
-            btn.innerText = "PUBLISH WEBSITE 🚀";
-            btn.disabled = false;
-        }).catch(err => {
-            alert("Error: Pastikan Realtime Database Rules sudah diset ke Public (true).");
-            console.error(err);
-            btn.innerText = "PUBLISH WEBSITE 🚀";
-            btn.disabled = false;
         });
     }
 
@@ -137,44 +116,41 @@
         db.ref('sites').on('value', s => {
             const list = document.getElementById('master-list');
             list.innerHTML = "";
-            if(!s.exists()) {
-                list.innerHTML = "<div class='glass p-10 text-center text-gray-600 italic'>Database Kosong.</div>";
-                return;
-            }
+            if(!s.exists()) return list.innerHTML = "<div class='glass p-10 text-center text-gray-600'>Kosong</div>";
+            
             s.forEach(child => {
                 const d = child.val();
                 list.innerHTML += `
-                    <div class="glass p-6 flex justify-between items-center hover:bg-white/5 transition group">
+                    <div class="glass p-6 flex justify-between items-center group transition">
                         <div>
-                            <h4 class="text-2xl font-black italic tracking-tighter group-hover:text-red-500 transition">/${child.key}</h4>
-                            <p class="text-[9px] text-gray-600 uppercase font-bold mt-1">Deployed: ${d.time}</p>
+                            <div class="flex items-center gap-3 mb-1">
+                                <h4 class="text-2xl font-black italic tracking-tighter">/${child.key}</h4>
+                                <span class="stat-badge"> ${d.views || 0} Visitors</span>
+                            </div>
+                            <p class="text-[9px] text-gray-600 uppercase font-bold">Deployed: ${d.time}</p>
                         </div>
-                        <div class="flex gap-4">
-                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 border border-blue-500/20 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">VIEW</a>
-                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-800 border border-red-800/20 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">DELETE</button>
+                        <div class="flex gap-2">
+                            <a href="#${child.key}" target="_blank" class="text-[10px] font-black text-blue-500 border border-blue-500/10 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">VIEW</a>
+                            <button onclick="delSite('${child.key}')" class="text-[10px] font-black text-red-800 border border-red-800/10 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">DEL</button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function delSite(k) { if(confirm("Hapus data ini selamanya?")) db.ref('sites/'+k).remove(); }
-    
-    function logout() { 
-        localStorage.removeItem('rloy_admin_session'); 
-        location.reload(); 
-    }
+    function delSite(k) { if(confirm("Hapus?")) db.ref('sites/'+k).remove(); }
+    function logout() { localStorage.removeItem('rloy_admin_session'); location.reload(); }
 
     function serve(h) {
         db.ref('sites/'+h).once('value', s => {
             if(s.exists()) {
+                // LOGIKA COUNTER: Tambah visitor setiap kali dibuka
+                db.ref('sites/'+h+'/views').transaction((current) => (current || 0) + 1);
+                
                 document.open(); 
                 document.write(s.val().content); 
                 document.close();
-            } else {
-                window.location.hash = "";
-                location.reload();
-            }
+            } else { location.hash = ""; location.reload(); }
         });
     }
 </script>
